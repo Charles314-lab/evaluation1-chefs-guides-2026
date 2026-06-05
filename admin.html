@@ -303,19 +303,39 @@ async function delC(id){
 }
 
 /* ---------- copie corrigée PDF (modèle A4 professionnel) ---------- */
-/* Génère un PDF A4 multipage en découpant le canvas (aucune troncature) */
+/* Génère un PDF A4 multipage : coupe uniquement ENTRE les blocs (ni troncature ni doublon) */
 function generatePDF(el,filename,onDone){
   const J=(window.jspdf&&window.jspdf.jsPDF);
   if(typeof html2canvas==='undefined'||!J){ if(onDone)onDone(false); return; }
   html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0}).then(function(canvas){
     const pdf=new J('p','mm','a4'), pageH=297, m=10, imgW=190;
-    const imgH=canvas.height*imgW/canvas.width, usable=pageH-2*m;
-    const data=canvas.toDataURL('image/jpeg',0.95);
-    let hLeft=imgH, page=0;
-    while(hLeft>0){
+    const pxMm=canvas.width/imgW;                  // pixels canvas par mm
+    const pageMaxPx=Math.floor((pageH-2*m)*pxMm);  // hauteur utile d'une page, en px
+    const sc=canvas.width/el.offsetWidth;          // px canvas par px CSS
+    const origin=el.getBoundingClientRect().top;
+    // bornes de coupe = sommet de chaque bloc enfant → jamais de coupe au milieu d'un bloc
+    const tops=[];
+    for(let i=0;i<el.children.length;i++){
+      const t=Math.round((el.children[i].getBoundingClientRect().top-origin)*sc);
+      if(t>0&&t<canvas.height)tops.push(t);
+    }
+    tops.push(canvas.height);
+    // pagination gloutonne : la tranche la plus haute qui tient dans une page
+    let start=0;
+    for(let page=0; start<canvas.height; page++){
+      const target=start+pageMaxPx;
+      let cut=-1;
+      for(let i=0;i<tops.length;i++){ if(tops[i]>start&&tops[i]<=target&&tops[i]>cut)cut=tops[i]; }
+      if(cut<0)cut=Math.min(target,canvas.height);   // bloc plus haut qu'une page : coupe forcée
+      const h=cut-start;
+      const slice=document.createElement('canvas');
+      slice.width=canvas.width; slice.height=h;
+      const cx=slice.getContext('2d');
+      cx.fillStyle='#ffffff'; cx.fillRect(0,0,slice.width,h);
+      cx.drawImage(canvas,0,start,canvas.width,h,0,0,canvas.width,h);
       if(page>0)pdf.addPage();
-      pdf.addImage(data,'JPEG',m,m-usable*page,imgW,imgH,'sheet','FAST');
-      hLeft-=usable; page++;
+      pdf.addImage(slice.toDataURL('image/jpeg',0.95),'JPEG',m,m,imgW,h/pxMm,'p'+page,'FAST');
+      start=cut;
     }
     pdf.save(filename); if(onDone)onDone(true);
   }).catch(function(){ if(onDone)onDone(false); });
