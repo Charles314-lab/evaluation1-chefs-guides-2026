@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Examen des Aspirants Chefs Guides 2026 — MJA Mali</title>
+<style>
+  :root{
+    --kaki:#7a7233; --kaki-d:#5c5626; --olive:#9aa05a;
+    --navy:#1f3a5f; --navy-d:#142840; --gold:#c8a24a; --gold-l:#e6c87a;
+    --cream:#f5f1e6; --ink:#23241f; --green:#2e7d32; --red:#b03030;
+    --paper:#fbf9f2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);
+    background:linear-gradient(160deg,#2b2c22,#1c2b1c 60%,#14202b);min-height:100vh}
+  .wrap{max-width:980px;margin:0 auto;padding:18px}
+  .screen{display:none;animation:fade .4s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .card{background:var(--paper);border-radius:16px;padding:26px 28px;
+    box-shadow:0 18px 50px rgba(0,0,0,.45);border:1px solid #e7e0cc}
+  h1{font-size:26px;color:var(--navy);letter-spacing:.3px}
+  h2{font-size:20px;color:var(--kaki-d);margin-bottom:10px}
+  .sub{color:#6b6553;font-size:14px;margin-top:4px}
+  label{display:block;font-size:13px;font-weight:600;color:var(--navy-d);margin:12px 0 5px}
+  input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid #cfc7ad;
+    border-radius:10px;font-size:15px;background:#fff;font-family:inherit}
+  textarea{min-height:90px;resize:vertical}
+  .btn{display:inline-block;border:none;border-radius:11px;padding:13px 22px;font-size:15px;
+    font-weight:700;cursor:pointer;transition:transform .1s,filter .15s}
+  .btn:hover{filter:brightness(1.07)} .btn:active{transform:translateY(1px)}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-l),var(--gold));color:#3a2d05}
+  .btn-navy{background:var(--navy);color:#fff}
+  .btn-green{background:var(--green);color:#fff}
+  .btn-ghost{background:transparent;border:1.5px solid #b9b196;color:#5c5626}
+  .center{text-align:center}
+  .tag{display:inline-block;background:var(--kaki);color:#fff;border-radius:20px;
+    padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:.5px}
+  .seat{display:flex;gap:16px;justify-content:center;margin:18px 0;flex-wrap:wrap}
+  .seat .box{background:var(--navy);color:#fff;border-radius:12px;padding:14px 22px;text-align:center;min-width:150px}
+  .seat .box b{display:block;font-size:24px;color:var(--gold-l);margin-top:3px}
+  .rules{background:#efe9d6;border-left:5px solid var(--kaki);border-radius:8px;
+    padding:14px 16px;font-size:14.5px;line-height:1.7;margin:16px 0}
+  .rules b{color:var(--kaki-d)}
+
+  /* ===== Hall + portes (double battant) ===== */
+  .hall{position:relative;height:480px;border-radius:14px;overflow:hidden;margin:16px 0;
+    background:
+      radial-gradient(ellipse at 50% 18%,#33422a,#1b240f 70%),
+      linear-gradient(180deg,#283420,#161f0d);
+    display:flex;align-items:flex-end;justify-content:center}
+  .plaque{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:6;
+    background:linear-gradient(180deg,#e6c87a,#c8a24a);color:#3a2d05;font-weight:800;
+    padding:9px 20px;border-radius:9px;font-size:13.5px;letter-spacing:.4px;text-align:center;
+    box-shadow:0 6px 18px rgba(0,0,0,.5);border:2px solid #8a6a1f;max-width:90%;line-height:1.35}
+  .doorway{position:relative;width:66%;max-width:440px;height:412px;perspective:1500px;
+    background:radial-gradient(ellipse at 50% 42%,#46582f,#10160a);
+    border:18px solid #2c2413;border-bottom:none;border-radius:12px 12px 0 0;
+    box-shadow:inset 0 0 50px rgba(0,0,0,.85),0 14px 36px rgba(0,0,0,.55)}
+  .doorway .inside{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:#d6e4bf;text-align:center;padding:16px;z-index:1;font-size:15px}
+  .doorway .inside .big{font-size:50px;margin-bottom:6px}
+  .leaf{position:absolute;top:0;height:100%;width:50.3%;z-index:3;
+    background:
+      repeating-linear-gradient(180deg,rgba(0,0,0,.045) 0 5px,rgba(255,255,255,.03) 5px 10px),
+      linear-gradient(90deg,#5b4322,#896a43 55%,#6f5430);
+    border:2px solid #34270f;transition:transform 1.8s cubic-bezier(.6,0,.25,1);
+    transform-style:preserve-3d;box-shadow:0 0 18px rgba(0,0,0,.35)}
+  .leaf.left{left:0;transform-origin:left center;border-right:1.5px solid #20160a}
+  .leaf.right{right:0;transform-origin:right center;border-left:1.5px solid #20160a}
+  .leaf .pnl{position:absolute;left:14%;width:72%;background:rgba(0,0,0,.10);
+    border:2px solid rgba(0,0,0,.32);border-radius:6px;
+    box-shadow:inset 0 2px 6px rgba(255,255,255,.14),inset 0 -5px 10px rgba(0,0,0,.42)}
+  .leaf .pnl.top{top:7%;height:40%} .leaf .pnl.bot{top:53%;height:40%}
+  .leaf .handle{position:absolute;top:47%;width:14px;height:14px;border-radius:50%;
+    background:radial-gradient(circle at 35% 35%,#f3d98c,#9c7a2a);box-shadow:0 0 0 3px #20160a,0 2px 5px rgba(0,0,0,.55)}
+  .leaf.left .handle{right:9px} .leaf.right .handle{left:9px}
+  .hall.open .leaf.left{transform:rotateY(-101deg)}
+  .hall.open .leaf.right{transform:rotateY(101deg)}
+
+  .ex-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    background:var(--navy);color:#fff;border-radius:12px;padding:12px 16px;margin-bottom:14px}
+  .lvl{font-weight:800;color:var(--gold-l)}
+  .pill{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:13px}
+  .q{background:#fff;border:1px solid #e2dcc6;border-radius:12px;padding:16px 18px;margin-bottom:14px}
+  .q .qn{font-weight:700;color:var(--navy-d);margin-bottom:10px}
+  .q .qmod{font-size:11px;color:#9a9276;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+  .opt{display:flex;align-items:center;gap:9px;padding:8px 10px;border:1.4px solid #ddd6bf;
+    border-radius:9px;margin:6px 0;cursor:pointer;background:#fcfbf5}
+  .opt:hover{border-color:var(--gold)}
+  .opt input{width:auto}
+  .toast{position:fixed;left:50%;top:18px;transform:translateX(-50%);background:var(--red);color:#fff;
+    padding:12px 20px;border-radius:10px;font-weight:600;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.3);
+    display:none;max-width:90%}
+  .banner{background:#fff4d6;border:1px solid var(--gold);color:#6b5310;border-radius:10px;
+    padding:9px 14px;font-size:13px;margin-bottom:14px}
+  .final-emoji{font-size:64px}
+  .score{font-size:42px;font-weight:800;color:var(--navy)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:9px 10px;border-bottom:1px solid #e4ddc8;text-align:left}
+  th{background:#efe9d6;color:var(--navy-d)}
+  tr:hover td{background:#fbf7e9}
+  .rank{font-weight:800;color:var(--gold)}
+  .st-ok{color:var(--green);font-weight:700}
+  .st-dq{color:var(--red);font-weight:700}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .right{margin-left:auto}
+  .mini{font-size:12px;color:#777}
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;
+    justify-content:center;padding:24px;z-index:40;overflow:auto}
+  .modal.show{display:flex}
+  .modal .card{max-width:760px;width:100%}
+  @media print{body{background:#fff}.noprint{display:none!important}.modal{position:static;background:none;padding:0}
+    .modal .card{box-shadow:none;border:none}}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<div class="wrap">
+
+  <!-- 1) CONNEXION -->
+  <section id="screen-connexion" class="screen active">
+    <div class="card">
+      <div class="center">
+        <span class="tag">MJA MALI — 2026</span>
+        <h1 style="margin-top:12px">Examen des Aspirants Chefs Guides</h1>
+        <p class="sub">« L'amour du Christ nous presse » — Persévérez jusqu'au bout.</p>
+      </div>
+      <label>Nom & Prénom</label>
+      <input id="f-nom" placeholder="Ex : Maxime MENSAH" autocomplete="off">
+      <label>Église</label>
+      <select id="f-eglise">
+        <option value="">— Choisir —</option>
+        <option>Daoudaougou</option><option>Kangaba</option><option>Sénou</option>
+        <option>Gouana</option><option>Autre</option>
+      </select>
+      <label>Grade JA actuel</label>
+      <select id="f-grade">
+        <option value="">— Choisir —</option>
+        <option>Aucun grade</option><option>Ami</option><option>Compagnon</option>
+        <option>Explorateur</option><option>Pionnier</option><option>Voyageur</option><option>Guide</option>
+        <option>Chef Guide</option>
+      </select>
+      <div class="center" style="margin-top:22px">
+        <button class="btn btn-gold" onclick="connexion()">Se présenter à l'examen</button>
+      </div>
+      <div class="center" style="margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-ghost noprint" onclick="show('screen-consult')" style="font-size:13px;padding:7px 14px">Consulter ma copie corrigée</button>
+        <button class="btn btn-ghost noprint" onclick="askAdmin()" style="font-size:13px;padding:7px 14px">Espace responsable</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2) PORTE + REGLES -->
+  <section id="screen-porte" class="screen">
+    <div class="card">
+      <div class="center"><span class="tag">SALLE D'EXAMEN</span>
+        <h1 style="margin-top:10px">Bienvenue, <span id="p-nom" style="color:var(--kaki-d)"></span></h1></div>
+
+      <div class="seat">
+        <div class="box">Numéro de table<b id="p-table">—</b></div>
+        <div class="box">Votre place<b id="p-place">—</b></div>
+        <div class="box">Durée de l'épreuve<b>1 heure</b></div>
+      </div>
+
+      <div class="hall" id="porte-hall">
+        <div class="plaque">EXAMEN DES ASPIRANTS CHEFS GUIDES 2026<br>★ PERSÉVÉRANCE ★</div>
+        <div class="doorway">
+          <div class="inside"><div><div class="big">📖</div>La salle de composition vous attend</div></div>
+          <div class="leaf left"><span class="pnl top"></span><span class="pnl bot"></span><span class="handle"></span></div>
+          <div class="leaf right"><span class="pnl top"></span><span class="pnl bot"></span><span class="handle"></span></div>
+        </div>
+      </div>
+
+      <div class="rules">
+        <b>⏱ Durée de l'épreuve : 1 heure.</b> Le temps est décompté et l'épreuve se termine automatiquement à la fin du temps imparti.<br><br>
+        <b>La règle de la persévérance (le Kaki) :</b><br>
+        Une fois entré dans la salle, vous y restez jusqu'à ce que vous ayez <b>terminé l'épreuve</b>. Ne quittez pas la page avant la fin.<br><br>
+        Celui qui endure jusqu'au bout, celui-là sera récompensé. Entrez avec courage et donnez le meilleur de vous-même.
+      </div>
+
+      <div class="center">
+        <button class="btn btn-green" onclick="entrer()">Entrer dans la salle</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3) EXAMEN -->
+  <section id="screen-examen" class="screen">
+    <div class="banner noprint">Ne quittez pas cette page tant que vous n'avez pas terminé l'épreuve.</div>
+    <div class="ex-head">
+      <div><span class="lvl" id="e-niveau">Épreuve 1</span> <span class="mini" id="e-niveau-desc"></span></div>
+      <div class="row">
+        <span class="pill">⏱ <span id="e-timer">00:00</span></span>
+        <span class="pill">Sorties : <span id="e-exits">0</span>/3</span>
+      </div>
+    </div>
+    <div id="examen-questions"></div>
+    <div class="center" style="margin:10px 0 30px">
+      <button class="btn btn-gold" onclick="terminer()">Terminer et soumettre l'épreuve</button>
+    </div>
+  </section>
+
+  <!-- 4) FIN -->
+  <section id="screen-fin" class="screen">
+    <div class="card center">
+      <div class="hall open" id="fin-hall" style="height:300px">
+        <div class="plaque">★ FÉLICITATIONS ★</div>
+        <div class="doorway" style="height:250px">
+          <div class="inside"><div><div class="big">🎖️</div></div></div>
+          <div class="leaf left"><span class="pnl top"></span><span class="pnl bot"></span><span class="handle"></span></div>
+          <div class="leaf right"><span class="pnl top"></span><span class="pnl bot"></span><span class="handle"></span></div>
+        </div>
+      </div>
+      <h1>Félicitations d'avoir tenu jusqu'au bout !</h1>
+      <p class="sub">La persévérance est la marque d'un vrai Chef Guide.</p>
+      <p style="margin-top:18px">Score provisoire (questions à choix)</p>
+      <div class="score" id="fin-score">—</div>
+      <p class="mini" id="fin-detail"></p>
+      <div class="rules" style="margin-top:16px;text-align:left">
+        Ta copie a bien été enregistrée. Les copies seront <b>corrigées dans les brefs délais</b>. Ton <b>identifiant</b> te sera ensuite communiqué pour télécharger ta copie entièrement corrigée depuis « Consulter ma copie corrigée ».
+      </div>
+      <div style="margin-top:18px"><button class="btn btn-navy" onclick="location.reload()">Fermer</button></div>
+    </div>
+  </section>
+
+  <!-- 5) DISQUALIFIE -->
+  <section id="screen-dq" class="screen">
+    <div class="card center">
+      <div class="final-emoji">🚫</div>
+      <h1 style="color:var(--red)">Épreuve interrompue</h1>
+      <p class="sub">L'examen est clôturé.</p>
+      <div class="rules" style="border-color:var(--red);text-align:left">
+        Vos points déjà acquis ont été <b>enregistrés</b>. La persévérance consiste à rester jusqu'au bout, malgré les pressions.
+      </div>
+      <div class="score" id="dq-score">—</div>
+      <p class="mini" style="margin-top:10px">Les copies seront corrigées dans les brefs délais ; ton identifiant te sera communiqué pour consulter ta copie.</p>
+      <div style="margin-top:14px"><button class="btn btn-navy" onclick="location.reload()">Fermer</button></div>
+    </div>
+  </section>
+
+  <!-- 7) CONSULTATION COPIE -->
+  <section id="screen-consult" class="screen">
+    <div class="card">
+      <div class="center"><span class="tag">CONSULTATION</span>
+        <h1 style="margin-top:10px">Consulter ma copie corrigée</h1>
+        <p class="sub">Entre l'identifiant communiqué par le responsable pour télécharger ta copie corrigée.</p></div>
+      <label>Identifiant de la copie</label>
+      <input id="c-code" placeholder="Ex : K7X2P9" autocomplete="off" style="text-transform:uppercase;letter-spacing:3px;text-align:center;font-weight:700;font-size:18px">
+      <p class="mini" style="margin-top:6px">Cet identifiant t'est communiqué par le responsable une fois ta copie corrigée.</p>
+      <div class="center" style="margin-top:18px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-gold" onclick="consulter()">Voir ma copie corrigée</button>
+        <button class="btn btn-ghost" onclick="show('screen-connexion')">Retour</button>
+      </div>
+      <div id="c-result"></div>
+    </div>
+  </section>
+
+  <!-- 6) ADMIN -->
+  <section id="screen-admin" class="screen">
+    <div class="card">
+      <div class="row">
+        <h1>Dashboard responsable</h1>
+        <div class="right row noprint">
+          <button class="btn btn-ghost" onclick="renderAdmin()">↻ Actualiser</button>
+          <button class="btn btn-ghost" onclick="location.reload()">Quitter</button>
+        </div>
+      </div>
+      <p class="sub">Correction en temps réel · Classement automatique · Export PDF par candidat</p>
+      <div id="admin-stats" class="row" style="margin:14px 0"></div>
+      <div style="overflow:auto">
+        <table id="admin-table">
+          <thead><tr><th>#</th><th>Nom</th><th>Église</th><th>Grade</th><th>Niveau</th>
+            <th>Sorties</th><th>Statut</th><th>Score</th><th class="noprint">Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="mini" style="margin-top:12px">Classement trié par score décroissant. Le score se met à jour dès que vous corrigez les réponses ouvertes.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- MODAL detail candidat -->
+<div class="modal" id="modal">
+  <div class="card" id="modal-body"></div>
+</div>
+
+<!-- MODAL rallonge de temps (largesse) -->
+<div class="modal" id="grace-modal">
+  <div class="card center" style="max-width:430px">
+    <div class="final-emoji">⏳</div>
+    <h2 style="color:var(--navy)">Le temps est écoulé</h2>
+    <p class="sub" id="grace-text">Voulez-vous 15 minutes supplémentaires ?</p>
+    <div class="row" style="justify-content:center;margin-top:20px">
+      <button class="btn btn-green" onclick="accepterRallonge()">Oui</button>
+      <button class="btn btn-ghost" onclick="refuserRallonge()">Non, terminer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Configuration Supabase + librairie + banque de questions -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="questions.js"></script>
+<script>
+const ADMIN_PASS = "CG2026"; // À modifier
+const LS_KEY = "examCG2026_sessions";
+const DUREE_MIN = 60;        // durée de l'épreuve en minutes
+const RAB_MIN   = 15;        // rallonge proposée à la fin (une seule fois)
+
+let S = null;          // session courante
+let examActive = false;
+let graceUsed = false; // rallonge déjà accordée ?
+let timerInt = null;
+
+/* ---------- utilitaires ---------- */
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';
+  clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',3500);}
+/* --- stockage local (cache / repli hors-ligne) --- */
+function localAll(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch(e){return[]}}
+function localSave(a){localStorage.setItem(LS_KEY,JSON.stringify(a))}
+function localUpsert(sess){const a=localAll();const i=a.findIndex(x=>x.id===sess.id);
+  if(i>=0)a[i]=sess;else a.push(sess);localSave(a);}
+
+/* --- couche Supabase (s'active dès que config.js contient la clé) --- */
+let _sb=null;
+function cloudReady(){return !!(typeof SUPABASE_URL!=='undefined' && typeof SUPABASE_ANON!=='undefined'
+  && SUPABASE_ANON && SUPABASE_ANON.indexOf('COLLE_TA_CLE')!==0 && window.supabase);}
+function cloudClient(){if(!_sb)_sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);return _sb;}
+function toRow(s){return{id:s.id,nom:s.nom,eglise:s.eglise,grade:s.grade,table_no:s.table,place:s.place,
+  level:s.level,exits:s.exits,status:s.status,score:s.score,max_auto:s.maxAuto,rallonge:s.rallonge||null,
+  selected:s.selected,answers:s.answers,manual:s.manual||null,created_at:s.dateISO,submitted_at:s.submittedISO||null};}
+function fromRow(r){return{id:r.id,nom:r.nom,eglise:r.eglise,grade:r.grade,table:r.table_no,place:r.place,
+  level:r.level,exits:r.exits,status:r.status,score:r.score,maxAuto:r.max_auto,rallonge:r.rallonge,
+  selected:r.selected,answers:r.answers,manual:r.manual||{},dateISO:r.created_at,submittedISO:r.submitted_at};}
+async function pushCloud(s){try{const{error}=await cloudClient().from('exam_sessions').upsert(toRow(s));
+  if(error)console.warn('Supabase push:',error.message);}catch(e){console.warn('Supabase push:',e);}}
+async function fetchAll(){if(cloudReady()){try{const{data,error}=await cloudClient().from('exam_sessions').select('*');
+  if(!error&&data)return data.map(fromRow);}catch(e){console.warn('Supabase fetch:',e);}}return localAll();}
+async function fetchOne(code){
+  if(cloudReady()){try{const{data}=await cloudClient().from('exam_sessions').select('*').eq('id',code).limit(1);
+    if(data&&data[0])return fromRow(data[0]);}catch(e){console.warn('Supabase fetchOne:',e);}return null;}
+  return localAll().find(x=>x.id===code)||null;
+}
+
+/* --- écriture unifiée : local + cloud --- */
+function upsert(sess){ localUpsert(sess); if(cloudReady()) pushCloud(sess); }
+function rid(){const c="ABCDEFGHJKMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<6;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function pad(n){return(n<10?'0':'')+n}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function pick(arr,n){return shuffle(arr.slice()).slice(0,Math.min(n,arr.length));}
+/* tirage qui couvre d'abord chaque module, puis complète au hasard */
+function pickCovering(pool,total){
+  const byMod={}; pool.forEach(q=>{(byMod[q.mod]=byMod[q.mod]||[]).push(q);});
+  const mods=shuffle(Object.keys(byMod)); const chosen=[],used=new Set();
+  for(const m of mods){ if(chosen.length>=total) break; const g=shuffle(byMod[m].slice()); chosen.push(g[0]); used.add(g[0].id); }
+  const rest=shuffle(pool.filter(q=>!used.has(q.id)));
+  while(chosen.length<total && rest.length) chosen.push(rest.shift());
+  return shuffle(chosen.slice(0,total));
+}
+/* construit une épreuve mixte selon COMPO (QCM + courtes + cas) */
+function buildEpreuve(lv){
+  const co=COMPO[lv]; let arr=[];
+  if(co.qcm)   arr=arr.concat(pickCovering(POOL.qcm, co.qcm));
+  if(co.court) arr=arr.concat(pick(POOL.court, co.court));
+  if(co.cas)   arr=arr.concat(pick(POOL.cas, co.cas));
+  return shuffle(arr);
+}
+
+/* ---------- connexion ---------- */
+function connexion(){
+  const nom=document.getElementById('f-nom').value.trim();
+  const eglise=document.getElementById('f-eglise').value;
+  const grade=document.getElementById('f-grade').value;
+  if(!nom||!eglise||!grade){toast("Renseignez le nom, l'église et le grade.");return;}
+  const selected={1:buildEpreuve(1),2:buildEpreuve(2),3:buildEpreuve(3)};
+  S={id:rid(),nom,eglise,grade,
+     dateISO:new Date().toISOString(),
+     table:1+Math.floor(Math.random()*40),
+     place:"Rangée "+(1+Math.floor(Math.random()*5))+" · Siège "+(1+Math.floor(Math.random()*6)),
+     level:1,exits:0,selected,answers:{1:{},2:{},3:{}},status:"in-progress",score:0,
+     maxAuto:selected[1].filter(q=>q.opts).length};
+  upsert(S);
+  document.getElementById('p-nom').textContent=nom;
+  document.getElementById('p-table').textContent="N° "+S.table;
+  document.getElementById('p-place').textContent=S.place;
+  show('screen-porte');
+}
+
+/* ---------- entrer dans la salle ---------- */
+function entrer(){
+  const hall=document.getElementById('porte-hall');
+  hall.classList.add('open');                 // les portes s'ouvrent lentement en pivotant
+  setTimeout(()=>{ show('screen-examen'); startExam(); },2200);
+}
+function startExam(){
+  examActive=true;
+  const ec=document.getElementById('e-exits'); if(ec) ec.textContent=S.exits;
+  startTimer(DUREE_MIN);
+  renderQuestions();
+}
+function startTimer(min){
+  clearInterval(timerInt);
+  const fin=Date.now()+min*60*1000;
+  timerInt=setInterval(()=>{
+    let r=Math.floor((fin-Date.now())/1000);
+    if(r<=0){
+      clearInterval(timerInt);
+      document.getElementById('e-timer').textContent="00:00";
+      if(!examActive) return;
+      if(graceUsed){ terminer(); }                    // rallonge déjà utilisée -> fin définitive
+      else { examActive=false; offrirRallonge(); }     // proposer une rallonge (une seule fois)
+      return;
+    }
+    const el=document.getElementById('e-timer');
+    el.textContent=pad(Math.floor(r/60))+':'+pad(r%60);
+    el.style.color = r<=300 ? '#ffd27a' : '';         // alerte visuelle dans les 5 dernières minutes
+  },500);
+}
+function offrirRallonge(){
+  document.getElementById('grace-text').textContent="Voulez-vous "+RAB_MIN+" minutes supplémentaires ?";
+  document.getElementById('grace-modal').classList.add('show');
+}
+function accepterRallonge(){
+  graceUsed=true; S.rallonge=RAB_MIN; upsert(S);
+  document.getElementById('grace-modal').classList.remove('show');
+  examActive=true;
+  startTimer(RAB_MIN);                                 // le décompte repart pour la rallonge
+}
+function refuserRallonge(){
+  document.getElementById('grace-modal').classList.remove('show');
+  terminer();
+}
+
+/* ---------- rendu des questions (tirage stocké dans la session) ---------- */
+function renderQuestions(){
+  const lv=S.level, items=S.selected[lv], meta=NIVEAU[lv];
+  document.getElementById('e-niveau').textContent="Épreuve "+lv;
+  document.getElementById('e-niveau-desc').textContent="· "+meta.desc;
+  const box=document.getElementById('examen-questions'); box.innerHTML='';
+  items.forEach((it,idx)=>{
+    const saved=S.answers[lv][it.id];
+    const div=document.createElement('div');div.className='q';
+    let html=(it.mod?'<div class="qmod">'+it.mod+'</div>':'')+'<div class="qn">'+(idx+1)+'. '+it.q+'</div>';
+    if(it.opts){
+      it.opts.forEach((o,oi)=>{
+        html+='<label class="opt"><input type="radio" name="'+it.id+'" value="'+oi+'" '+
+          (saved==oi?'checked':'')+' onchange="ans(\''+it.id+'\','+oi+')"> '+o+'</label>';
+      });
+    }else{
+      html+='<textarea oninput="ans(\''+it.id+'\',this.value)" placeholder="Votre réponse...">'+(saved||'')+'</textarea>';
+    }
+    div.innerHTML=html;box.appendChild(div);
+  });
+}
+function ans(qid,val){S.answers[S.level][qid]=val;upsert(S);}
+
+/* ---------- détection des sorties (mécanisme volontairement non expliqué au candidat) ---------- */
+document.addEventListener('visibilitychange',()=>{ if(document.hidden) handleExit(); });
+function handleExit(){
+  if(!examActive) return;
+  S.exits++; upsert(S);
+  const ec=document.getElementById('e-exits'); if(ec) ec.textContent=S.exits;
+  if(S.exits>=3){ disqualify(); return; }
+  S.level=S.exits+1;            // 1 sortie -> Épreuve 2 ; 2 sorties -> Épreuve 3
+  upsert(S);
+  renderQuestions();
+  toast("⚠️ Vous avez quitté la salle. Restez concentré jusqu'à la fin de l'épreuve.");
+}
+
+/* ---------- correction auto (QCM des niveaux atteints) ---------- */
+function qWeight(it){ return it.opts ? POINTS.qcm : (it.id.indexOf('ca-')===0 ? POINTS.cas : POINTS.court); }
+function gradeFull(sess){
+  let raw=0,max=0,autoOk=0,autoN=0;
+  for(let lv=1; lv<=sess.level; lv++){
+    (sess.selected[lv]||[]).forEach(it=>{
+      const w=qWeight(it); max+=w;
+      if(it.opts){ autoN++; if(sess.answers[lv] && sess.answers[lv][it.id]==it.correct){ raw+=w; autoOk++; } }
+      else { const p=parseFloat((sess.manual||{})[lv+'_'+it.id]); if(!isNaN(p)) raw+=Math.max(0,Math.min(p,w)); }
+    });
+  }
+  return { sur20: max?Math.round((raw/max)*20):0, raw, max, autoOk, autoN };
+}
+
+/* ---------- terminer ---------- */
+function terminer(){
+  examActive=false; clearInterval(timerInt);
+  const g=gradeFull(S);
+  S.status="submitted"; S.score=g.sur20; S.autoOk=g.autoOk; S.autoN=g.autoN;
+  S.submittedISO=new Date().toISOString(); upsert(S);
+  document.getElementById('fin-score').textContent=g.autoOk+" / "+g.autoN;
+  document.getElementById('fin-detail').textContent=
+    "Bonnes réponses aux QCM. Les questions à rédiger seront corrigées par le responsable ; la note finale sera sur 20.";
+  show('screen-fin');
+  const fh=document.getElementById('fin-hall');
+  if(fh){ fh.classList.add('open'); setTimeout(()=>fh.classList.remove('open'),350); } // les portes se referment
+}
+
+/* ---------- disqualification ---------- */
+function disqualify(){
+  examActive=false; clearInterval(timerInt);
+  const g=gradeFull(S);
+  S.status="disqualified"; S.score=g.sur20; S.autoOk=g.autoOk; S.autoN=g.autoN;
+  S.submittedISO=new Date().toISOString(); upsert(S);
+  document.getElementById('dq-score').textContent="QCM réussis : "+g.autoOk+" / "+g.autoN;
+  show('screen-dq');
+}
+
+/* ====================== DASHBOARD RESPONSABLE ====================== */
+function askAdmin(){
+  const p=prompt("Mot de passe responsable :");
+  if(p===null) return;
+  if(p!==ADMIN_PASS){toast("Mot de passe incorrect.");return;}
+  show('screen-admin'); renderAdmin();
+  if(cloudReady() && !rtSubscribed){ rtSubscribed=true;
+    cloudClient().channel('exam-rt')
+      .on('postgres_changes',{event:'*',schema:'public',table:'exam_sessions'},()=>renderAdmin())
+      .subscribe();
+  }
+}
+function statusLabel(s){return s==='submitted'?'<span class="st-ok">Terminé</span>':
+  s==='disqualified'?'<span class="st-dq">Disqualifié</span>':'<span class="mini">En cours</span>';}
+function totalMax(sess){let m=0;for(let lv=1;lv<=sess.level;lv++)(sess.selected[lv]||[]).forEach(it=>{if(it.opts)m++});return m;}
+
+let adminCache=[];
+let rtSubscribed=false;
+async function renderAdmin(){
+  const all=(await fetchAll()).slice().sort((a,b)=>(b.score||0)-(a.score||0));
+  adminCache=all;
+  const tb=document.querySelector('#admin-table tbody'); tb.innerHTML='';
+  let done=0,dq=0;
+  all.forEach((s,i)=>{
+    if(s.status==='submitted')done++; if(s.status==='disqualified')dq++;
+    const tr=document.createElement('tr');
+    tr.innerHTML='<td class="rank">'+(i+1)+'</td><td>'+esc(s.nom)+'</td><td>'+esc(s.eglise)+
+      '</td><td>'+esc(s.grade)+'</td><td>Épr. '+s.level+'</td><td>'+s.exits+'/3</td><td>'+
+      statusLabel(s.status)+'</td><td><b>'+(s.score!=null?s.score:0)+'</b> / 20</td>'+
+      '<td class="noprint"><button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="openDetail(\''+s.id+'\')">Voir / Corriger</button></td>';
+    tb.appendChild(tr);
+  });
+  const mode = cloudReady()
+    ? '<span class="pill" style="background:#0a7d4f;color:#fff">● Supabase (temps réel)</span>'
+    : '<span class="pill" style="background:#8a6a1f;color:#fff">● Mode local</span>';
+  document.getElementById('admin-stats').innerHTML= mode +
+    '<span class="pill" style="background:var(--navy);color:#fff">Candidats : '+all.length+'</span>'+
+    '<span class="pill" style="background:var(--green);color:#fff">Terminés : '+done+'</span>'+
+    '<span class="pill" style="background:var(--red);color:#fff">Disqualifiés : '+dq+'</span>';
+}
+function esc(x){return(x||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+/* ---------- détail + correction des réponses ouvertes ---------- */
+function openDetail(id){
+  const s=(adminCache||[]).find(x=>x.id===id) || localAll().find(x=>x.id===id); if(!s)return;
+  s.manual=s.manual||{};
+  let html='<div class="row noprint"><h2>'+esc(s.nom)+'</h2>'+
+    '<div class="right row"><button class="btn btn-green" onclick="exportPDF()">⤓ Exporter PDF</button>'+
+    '<button class="btn btn-ghost" onclick="closeModal()">Fermer</button></div></div>'+
+    '<p class="mini">'+esc(s.eglise)+' · Grade '+esc(s.grade)+' · Table N°'+s.table+' · '+esc(s.place)+
+    '<br>Date : '+new Date(s.dateISO).toLocaleString('fr-FR')+' · Niveau atteint : Épreuve '+s.level+' · Sorties : '+s.exits+'/3'+(s.rallonge?' · Rallonge +'+s.rallonge+' min':'')+' · '+statusLabel(s.status)+'</p><hr style="margin:12px 0;border:none;border-top:1px solid #e2dcc6">';
+
+  for(let lv=1; lv<=s.level; lv++){
+    html+='<h2 style="font-size:16px">'+NIVEAU[lv].titre+'</h2>';
+    (s.selected[lv]||[]).forEach((it,idx)=>{
+      const a=s.answers[lv]?s.answers[lv][it.id]:undefined;
+      html+='<div class="q">'+(it.mod?'<div class="qmod">'+it.mod+'</div>':'')+'<div class="qn">'+(idx+1)+'. '+it.q+'</div>';
+      if(it.opts){
+        const ok=(a==it.correct);
+        html+='<div>Réponse : <b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+
+          (a!=null?esc(it.opts[a]):'(vide)')+'</b> '+(ok?'✓':'✗ — attendu : '+esc(it.opts[it.correct]))+'</div>';
+      }else{
+        const key=lv+'_'+it.id; const w=qWeight(it);
+        html+='<div style="background:#f5f1e0;border-radius:8px;padding:8px 10px;margin:6px 0">'+
+          (a?esc(a):'<i>(pas de réponse)</i>')+'</div>'+
+          '<div class="row noprint"><label style="margin:0">Points (0 à '+w+') :</label>'+
+          '<input type="number" min="0" max="'+w+'" step="1" style="width:80px" value="'+(s.manual[key]!=null?s.manual[key]:'')+
+          '" oninput="setManual(\''+s.id+'\',\''+key+'\',this.value)"> <span class="mini">'+(w===POINTS.cas?'cas pratique':'réponse courte')+' · '+w+' pts</span></div>';
+      }
+      html+='</div>';
+    });
+  }
+  const g=gradeFull(s);
+  html+='<div class="rules"><b>Note finale : <span id="note-finale">'+g.sur20+'</span> / 20</b>'+
+    ' &nbsp;·&nbsp; QCM corrigés auto : '+g.autoOk+'/'+g.autoN+
+    ' &nbsp;·&nbsp; <span class="mini">points pondérés par complexité (QCM '+POINTS.qcm+', courte '+POINTS.court+', cas '+POINTS.cas+')</span></div>';
+  document.getElementById('modal-body').innerHTML=html;
+  document.getElementById('modal').classList.add('show');
+}
+function manualTotal(s){let t=0;for(const k in(s.manual||{})){const v=parseInt(s.manual[k]);if(!isNaN(v))t+=v;}return t;}
+function setManual(id,key,val){
+  const s=(adminCache||[]).find(x=>x.id===id) || localAll().find(x=>x.id===id); if(!s)return;
+  s.manual=s.manual||{};s.manual[key]=val;
+  const g=gradeFull(s); s.score=g.sur20;            // note finale sur 20, pondérée
+  localUpsert(s); if(cloudReady()) pushCloud(s);
+  const nf=document.getElementById('note-finale');if(nf)nf.textContent=g.sur20;
+  renderAdmin();
+}
+function closeModal(){document.getElementById('modal').classList.remove('show');}
+function exportPDF(){window.print();}
+
+/* ====================== COPIE CORRIGÉE DU CANDIDAT ====================== */
+let consultS=null;
+function copiePending(s){let p=false;for(let lv=1;lv<=(s.level||1);lv++)((s.selected&&s.selected[lv])||[]).forEach(it=>{if(!it.opts){const v=(s.manual||{})[lv+'_'+it.id];if(v==null||v==='')p=true;}});return p;}
+function buildCopyHTML(s){
+  const g=gradeFull(s); const pend=copiePending(s);
+  let h='<style>body{font-family:Arial,sans-serif;color:#222;max-width:760px;margin:20px auto;padding:0 16px}h1{color:#1f3a5f;font-size:20px}h2{color:#5c5626;font-size:15px;margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}.q{margin:9px 0;padding:9px 11px;border:1px solid #ddd;border-radius:8px}.qn{font-weight:bold;color:#142840}.ok{color:#2e7d32;font-weight:bold}.ko{color:#b03030;font-weight:bold}.ans{background:#f5f1e0;padding:6px 9px;border-radius:6px;margin:4px 0;white-space:pre-wrap}.note{background:#eef2f8;padding:12px 14px;border-radius:8px;font-size:17px;margin:14px 0}.mut{color:#888;font-size:12.5px}</style>';
+  h+='<h1>Copie corrigée — Examen Aspirants Chefs Guides 2026</h1>';
+  h+='<p><b>'+esc(s.nom)+'</b> · '+esc(s.eglise)+' · Grade '+esc(s.grade)+'<br><span class="mut">'+(s.dateISO?new Date(s.dateISO).toLocaleString('fr-FR'):'')+' · Épreuve '+(s.level||1)+(s.status==='disqualified'?' · Disqualifié':'')+'</span></p>';
+  h+='<div class="note"><b>Note : '+g.sur20+' / 20</b>'+(pend?' <span class="mut">(provisoire : réponses rédigées en attente de correction)</span>':'')+'</div>';
+  for(let lv=1;lv<=(s.level||1);lv++){
+    h+='<h2>'+(NIVEAU[lv]?NIVEAU[lv].titre:'Épreuve '+lv)+'</h2>';
+    ((s.selected&&s.selected[lv])||[]).forEach((it,idx)=>{
+      const a=s.answers&&s.answers[lv]?s.answers[lv][it.id]:undefined;
+      h+='<div class="q"><div class="qn">'+(idx+1)+'. '+esc(it.q)+'</div>';
+      if(it.opts){const ok=(a==it.correct);
+        h+='<div>Votre réponse : <span class="'+(ok?'ok':'ko')+'">'+(a!=null?esc(it.opts[a]):'(vide)')+'</span> '+(ok?'✓':'✗')+'</div>';
+        if(!ok)h+='<div>Bonne réponse : <span class="ok">'+esc(it.opts[it.correct])+'</span></div>';
+        h+='<div class="mut">'+(ok?POINTS.qcm:0)+' / '+POINTS.qcm+' pt</div>';
+      }else{const key=lv+'_'+it.id,w=qWeight(it),p=(s.manual||{})[key];
+        h+='<div class="ans">'+(a?esc(a):'<i>(pas de réponse)</i>')+'</div>';
+        h+='<div class="mut">'+((p!=null&&p!=='')?('Note : '+p+' / '+w+' pts'):'En attente de correction (sur '+w+' pts)')+'</div>';
+      }
+      h+='</div>';
+    });
+  }
+  h+='<p class="mut" style="margin-top:18px">MJA Mali · Programme Chefs Guides 2026</p>';
+  return h;
+}
+function downloadCopy(s){
+  if(!s){toast("Copie indisponible.");return;}
+  const w=window.open('','_blank');
+  if(!w){toast("Autorise les fenêtres pour télécharger la copie.");return;}
+  w.document.write('<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><title>Copie corrigée - '+esc(s.nom)+'</title></head><body>'+buildCopyHTML(s)+'<scr'+'ipt>setTimeout(function(){window.print();},400);</scr'+'ipt></body></html>');
+  w.document.close();
+}
+async function consulter(){
+  const code=document.getElementById('c-code').value.trim().toUpperCase();
+  const box=document.getElementById('c-result');
+  if(!code){toast("Entre ton identifiant.");return;}
+  box.innerHTML='<p class="mini" style="margin-top:14px">Recherche en cours...</p>';
+  const s=await fetchOne(code);
+  if(!s){box.innerHTML='<div class="rules" style="margin-top:14px">Aucune copie trouvée pour cet identifiant. Vérifie le code communiqué par le responsable.</div>';return;}
+  consultS=s; const g=gradeFull(s); const pend=copiePending(s);
+  box.innerHTML='<div class="rules" style="margin-top:14px"><b>'+esc(s.nom)+'</b> · '+esc(s.eglise)+'<br>'+
+    'Note : <b>'+g.sur20+' / 20</b>'+(pend?' <span class="mini">(correction en cours, copie provisoire)</span>':' <span class="mini">(note définitive)</span>')+'</div>'+
+    '<div class="center" style="margin-top:12px"><button class="btn btn-gold" onclick="downloadCopy(consultS)">Télécharger ma copie corrigée (PDF)</button></div>';
+}
+</script>
+</body>
+</html>
