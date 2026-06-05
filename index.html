@@ -311,7 +311,8 @@
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="questions.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const ADMIN_PASS = "CG2026"; // À modifier
 const LS_KEY = "examCG2026_sessions";
@@ -658,26 +659,39 @@ function buildCopyHTML(s){
     +'<div class="foot">MJA Mali · Programme Chefs Guides 2026 · « L\'amour du Christ nous presse »</div>'
     +'</div>';
 }
+/* Génère un PDF A4 multipage en découpant le canvas (aucune troncature) */
+function generatePDF(el,filename,onDone){
+  const J=(window.jspdf&&window.jspdf.jsPDF);
+  if(typeof html2canvas==='undefined'||!J){ if(onDone)onDone(false); return; }
+  html2canvas(el,{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0}).then(function(canvas){
+    const pdf=new J('p','mm','a4'), pageH=297, m=10, imgW=190;
+    const imgH=canvas.height*imgW/canvas.width, usable=pageH-2*m;
+    const data=canvas.toDataURL('image/jpeg',0.95);
+    let hLeft=imgH, page=0;
+    while(hLeft>0){
+      if(page>0)pdf.addPage();
+      pdf.addImage(data,'JPEG',m,m-usable*page,imgW,imgH,'sheet','FAST');
+      hLeft-=usable; page++;
+    }
+    pdf.save(filename); if(onDone)onDone(true);
+  }).catch(function(){ if(onDone)onDone(false); });
+}
 function downloadCopy(s){
   if(!s){toast("Copie indisponible.");return;}
   const nom=(s.nom||'candidat').replace(/[^a-zA-Z0-9]+/g,'_');
   const wrap=document.createElement('div');
-  wrap.style.position='fixed'; wrap.style.left='-10000px'; wrap.style.top='0';
+  wrap.style.position='absolute'; wrap.style.left='-10000px'; wrap.style.top='0';
   wrap.innerHTML=buildCopyHTML(s);
   document.body.appendChild(wrap);
   const el=wrap.querySelector('#pdfsheet');
   const cleanup=function(){ if(wrap.parentNode) document.body.removeChild(wrap); };
-  if(typeof html2pdf==='undefined'){
-    const w=window.open('','_blank');
-    if(w){ w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Copie</title></head><body style="margin:0">'+buildCopyHTML(s)+'<scr'+'ipt>setTimeout(function(){window.print()},400)</scr'+'ipt></body></html>'); w.document.close(); }
-    cleanup(); return;
-  }
   toast("Génération du PDF...");
   setTimeout(function(){
-    html2pdf().set({margin:[10,10,12,10],filename:'Copie_'+nom+'.pdf',image:{type:'jpeg',quality:0.96},
-      html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff'},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['css','legacy']}})
-      .from(el).save().then(cleanup).catch(cleanup);
-  },350);
+    generatePDF(el,'Copie_'+nom+'.pdf',function(okk){
+      if(!okk){ const w=window.open('','_blank'); if(w){ w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0">'+buildCopyHTML(s)+'<scr'+'ipt>setTimeout(function(){window.print()},400)</scr'+'ipt></body></html>'); w.document.close(); } }
+      cleanup();
+    });
+  },450);
 }
 async function consulter(){
   const code=document.getElementById('c-code').value.trim().toUpperCase();
