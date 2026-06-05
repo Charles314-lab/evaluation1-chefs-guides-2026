@@ -1,5 +1,5 @@
 /* ============================================================
-   Configuration Supabase  —  Examen Chefs Guides 2026
+   Configuration Supabase  ·  Examen Chefs Guides 2026
    SUPABASE_URL  : projet
    SUPABASE_ANON : clé publique (publishable). À révoquer/renouveler
                    librement depuis Supabase > Project Settings > API.

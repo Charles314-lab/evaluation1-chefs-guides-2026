@@ -1,5 +1,5 @@
 /* ============================================================
-   BANQUE DE QUESTIONS — Examen Aspirants & Chefs Guides 2026
+   BANQUE DE QUESTIONS :Examen Aspirants & Chefs Guides 2026
    Source : 10 modules officiels de la session MJA Mali 2026
    (Conférence Générale / Adventist Youth Ministries)
 
@@ -14,9 +14,9 @@
    ============================================================ */
 
 const NIVEAU = {
-  1:{ titre:"Épreuve 1 — Examen complet",     desc:"Couvre l'ensemble des modules (QCM et réponses courtes)" },
-  2:{ titre:"Épreuve 2 — Approfondissement",  desc:"Compréhension et cas pratiques sur tous les modules" },
-  3:{ titre:"Épreuve 3 — Application",        desc:"Cas pratiques et analyse approfondie" },
+  1:{ titre:"Épreuve 1 : Examen complet",     desc:"Couvre l'ensemble des modules (QCM et réponses courtes)" },
+  2:{ titre:"Épreuve 2 : Approfondissement",  desc:"Compréhension et cas pratiques sur tous les modules" },
+  3:{ titre:"Épreuve 3 : Application",        desc:"Cas pratiques et analyse approfondie" },
 };
 
 /* Composition de chaque épreuve (le tirage couvre tous les modules) */
@@ -32,53 +32,53 @@ const POINTS = { qcm:1, court:2, cas:3 };
 const POOL = {
   /* ----------------------- QCM ----------------------- */
   qcm:[
-    // Module 1 — Philosophie des Explorateurs
+    // Module 1 :Philosophie des Explorateurs
     {id:"q-m1-1",mod:"Philosophie Explorateurs",q:"Le Club des Explorateurs s'adresse aux jeunes de :",opts:["6 à 9 ans","10 à 15 ans","16 à 21 ans","4 à 9 ans"],correct:1},
     {id:"q-m1-2",mod:"Philosophie Explorateurs",q:"La devise de la Jeunesse Adventiste est :",opts:["L'amour du Christ nous presse","Toujours prêt","Servir Dieu d'abord","La foi en action"],correct:0},
     {id:"q-m1-3",mod:"Philosophie Explorateurs",q:"Dans l'emblème des Explorateurs, le triangle inversé représente :",opts:["La Trinité","La foi qui grandit","La montagne","Le danger"],correct:1},
     {id:"q-m1-4",mod:"Philosophie Explorateurs",q:"« Explorateur » désigne le club ; « Éclaireur » désigne :",opts:["Un autre club","Le grade","Le drapeau","Le chant"],correct:1},
-    // Module 2 — Philosophie des Aventuriers
+    // Module 2 :Philosophie des Aventuriers
     {id:"q-m2-1",mod:"Philosophie Aventuriers",q:"Le Club des Aventuriers s'adresse aux enfants de :",opts:["4 à 9 ans","6 à 9 ans","10 à 12 ans","0 à 5 ans"],correct:0},
     {id:"q-m2-2",mod:"Philosophie Aventuriers",q:"Quel est le verset fondateur du Club des Aventuriers ?",opts:["Jean 3.16","Proverbes 22.6","Psaume 23","Exode 20.8"],correct:1},
     {id:"q-m2-3",mod:"Philosophie Aventuriers",q:"Dans la philosophie des Aventuriers, trois institutions s'unissent pour l'enfant :",opts:["L'école, l'État et l'église","L'église, le foyer et l'école","Le foyer, le club et l'hôpital","L'église, le club et l'État"],correct:1},
     {id:"q-m2-4",mod:"Philosophie Aventuriers",q:"L'engagement de l'Aventurier est :",opts:["« Pour l'amour de Jésus, je ferai toujours de mon mieux »","« Toujours prêt à servir »","« Je veux être pur et loyal »","« L'amour du Christ me presse »"],correct:0},
-    // Module 3 — Logos JA
+    // Module 3 :Logos JA
     {id:"q-m3-1",mod:"Logos JA",q:"Dans les logos JA, la couleur bleue représente :",opts:["La pureté","La loyauté","Le sacrifice","L'excellence"],correct:1},
     {id:"q-m3-2",mod:"Logos JA",q:"La couleur rouge (écarlate) représente :",opts:["Le sacrifice du Christ","La nature","La royauté","Le feu"],correct:0},
     {id:"q-m3-3",mod:"Logos JA",q:"La couleur or (jaune) représente :",opts:["La richesse","L'excellence","Le soleil","La joie"],correct:1},
     {id:"q-m3-4",mod:"Logos JA",q:"Le logo des Chefs Guides a la forme d'un :",opts:["Cercle","Triangle","Octogone","Carré"],correct:2},
     {id:"q-m3-5",mod:"Logos JA",q:"Les trois flammes du logo Chef Guide rappellent :",opts:["La Trinité","Le message des trois anges","Les trois couleurs","Les trois classes"],correct:1},
-    // Module 4 — Fondements JA
+    // Module 4 :Fondements JA
     {id:"q-m4-1",mod:"Fondements JA",q:"Combien de classes progressives compte le Club des Explorateurs ?",opts:["4","5","6","7"],correct:2},
     {id:"q-m4-2",mod:"Fondements JA",q:"Combien y a-t-il d'idéaux de la Jeunesse Adventiste ?",opts:["3","4","5","6"],correct:2},
     {id:"q-m4-3",mod:"Fondements JA",q:"Un Chef Guide exerce son service :",opts:["Dans un club de Chefs Guides","Dans le club Aventuriers ou Explorateurs","Uniquement à l'Union","Nulle part en particulier"],correct:1},
     {id:"q-m4-4",mod:"Fondements JA",q:"La classe « Ami » correspond à l'âge de :",opts:["10 ans","12 ans","14 ans","9 ans"],correct:0},
-    // Module 5 — Origine des classes
+    // Module 5 :Origine des classes
     {id:"q-m5-1",mod:"Origine des classes",q:"Le sigle « MV » signifie :",opts:["Mouvement de la Vie","Missionnaires Volontaires","Mission Victoire","Maîtres Volontaires"],correct:1},
     {id:"q-m5-2",mod:"Origine des classes",q:"La couleur de la classe Pionnier est :",opts:["Verte","Grise","Bordeaux","Or"],correct:1},
     {id:"q-m5-3",mod:"Origine des classes",q:"La couleur de la classe Guide est :",opts:["Or","Bleu","Rouge","Vert"],correct:0},
     {id:"q-m5-4",mod:"Origine des classes",q:"Les deux premières classes créées (1922) sont :",opts:["Explorateur et Pionnier","Ami et Compagnon","Voyageur et Guide","Ami et Guide"],correct:1},
-    // Module 6 — Petits groupes des Aventuriers
+    // Module 6 :Petits groupes des Aventuriers
     {id:"q-m6-1",mod:"Petits groupes",q:"Le petit groupe « Petit Agneau » concerne les enfants de :",opts:["4 ans","6 ans","9 ans","5 ans"],correct:0},
     {id:"q-m6-2",mod:"Petits groupes",q:"Le groupe « Main Utile » a pour couleur :",opts:["Jaune","Orange","Bordeaux","Vert"],correct:2},
     {id:"q-m6-3",mod:"Petits groupes",q:"Le groupe « Castor Curieux » concerne les enfants de :",opts:["5 ans","7 ans","9 ans","4 ans"],correct:0},
     {id:"q-m6-4",mod:"Petits groupes",q:"Le groupe « Abeille Active » a pour couleur :",opts:["Bleu clair","Jaune","Orange","Bordeaux"],correct:1},
-    // Module 7 — Cérémonies d'ouverture et de clôture
+    // Module 7 :Cérémonies d'ouverture et de clôture
     {id:"q-m7-1",mod:"Cérémonies",q:"Lors de la montée des couleurs, le drapeau national est hissé :",opts:["En premier","En dernier","Au milieu","Il n'est pas hissé"],correct:1},
     {id:"q-m7-2",mod:"Cérémonies",q:"Le chant d'ouverture doit être exécuté :",opts:["En solo","À l'unisson","En silence","Par le directeur seul"],correct:1},
     {id:"q-m7-3",mod:"Cérémonies",q:"À la clôture, le drapeau national est récupéré :",opts:["En premier","En dernier","Au hasard","Il reste hissé"],correct:0},
     {id:"q-m7-4",mod:"Cérémonies",q:"Dans l'ordre des drapeaux, le premier (position d'honneur) est :",opts:["Le drapeau JA","Le drapeau National","Le drapeau des Explorateurs","Le drapeau Chrétien"],correct:1},
-    // Module 8 — Investiture
+    // Module 8 :Investiture
     {id:"q-m8-1",mod:"Investiture",q:"La cérémonie d'investiture sert à remettre au jeune :",opts:["Le foulard","L'insigne de classe","Le diplôme","La bougie"],correct:1},
     {id:"q-m8-2",mod:"Investiture",q:"Chez les Aventuriers, les insignes sont remis par :",opts:["Le pasteur","Les parents","Le directeur","Le secrétaire"],correct:1},
     {id:"q-m8-3",mod:"Investiture",q:"Selon le Manuel, le Club des Explorateurs n'est pas :",opts:["Une société secrète","Un ministère d'église","Un club de jeunes","Une organisation mondiale"],correct:0},
     {id:"q-m8-4",mod:"Investiture",q:"Combien d'objectifs officiels a la cérémonie d'investiture ?",opts:["2","3","4","5"],correct:2},
-    // Module 9 — Incorporation
+    // Module 9 :Incorporation
     {id:"q-m9-1",mod:"Incorporation",q:"« Incorporation » vient du latin in corpus, qui signifie :",opts:["Sortir du corps","Faire entrer dans le corps","Le corps saint","Corps et esprit"],correct:1},
     {id:"q-m9-2",mod:"Incorporation",q:"La grande bougie de 15 cm symbolise :",opts:["La Loi JA","La Promesse JA","L'Esprit du mouvement JA","Le candidat"],correct:2},
     {id:"q-m9-3",mod:"Incorporation",q:"Pendant l'incorporation, les Explorateurs sont assis en forme de :",opts:["Cercle","Ligne","« V »","Carré"],correct:2},
     {id:"q-m9-4",mod:"Incorporation",q:"Le nombre de bougies représentant la Loi JA est :",opts:["6","7","8","10"],correct:2},
-    // Module 10 — Tenue JA
+    // Module 10 :Tenue JA
     {id:"q-m10-1",mod:"Tenue JA",q:"La couleur kaki symbolise :",opts:["La pureté","L'endurance et la persévérance","La loyauté","Le sacrifice"],correct:1},
     {id:"q-m10-2",mod:"Tenue JA",q:"Le foulard JA se porte :",opts:["La pointe devant","La pointe dans le dos","Noué à la ceinture","Sur la tête"],correct:1},
     {id:"q-m10-3",mod:"Tenue JA",q:"Un uniforme complet compte :",opts:["7 éléments","9 éléments","11 éléments","15 éléments"],correct:2},

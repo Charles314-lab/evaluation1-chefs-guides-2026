@@ -3,59 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Examen des Aspirants Chefs Guides 2026 — MJA Mali</title>
+<title>Examen des Aspirants Chefs Guides 2026 · MJA Mali</title>
 <style>
   :root{
-    --kaki:#7a7233; --kaki-d:#5c5626; --olive:#9aa05a;
-    --navy:#1f3a5f; --navy-d:#142840; --gold:#c8a24a; --gold-l:#e6c87a;
-    --cream:#f5f1e6; --ink:#23241f; --green:#2e7d32; --red:#b03030;
-    --paper:#fbf9f2;
+    --navy:#173f86; --navy-d:#0e2a5e; --blue:#1f5fb0;
+    --gold:#f2b705; --gold-l:#ffd24a; --green:#1f8a4c; --green-d:#136034;
+    --kaki:#1f8a4c; --kaki-d:#13522f; --olive:#3a9b5e;
+    --cream:#eaf1fb; --ink:#1d2433; --red:#c0392b; --paper:#ffffff;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);
-    background:linear-gradient(160deg,#2b2c22,#1c2b1c 60%,#14202b);min-height:100vh}
+    background:linear-gradient(160deg,#0e2a5e,#15428a 55%,#0b2351);min-height:100vh}
   .wrap{max-width:980px;margin:0 auto;padding:18px}
   .screen{display:none;animation:fade .4s ease}
   .screen.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
   .card{background:var(--paper);border-radius:16px;padding:26px 28px;
-    box-shadow:0 18px 50px rgba(0,0,0,.45);border:1px solid #e7e0cc}
+    box-shadow:0 20px 54px rgba(8,22,52,.5);border:1px solid #dbe4f3;border-top:5px solid var(--gold)}
   h1{font-size:26px;color:var(--navy);letter-spacing:.3px}
-  h2{font-size:20px;color:var(--kaki-d);margin-bottom:10px}
-  .sub{color:#6b6553;font-size:14px;margin-top:4px}
+  h2{font-size:20px;color:var(--navy);margin-bottom:10px}
+  .sub{color:#5a6b86;font-size:14px;margin-top:4px}
   label{display:block;font-size:13px;font-weight:600;color:var(--navy-d);margin:12px 0 5px}
-  input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid #cfc7ad;
-    border-radius:10px;font-size:15px;background:#fff;font-family:inherit}
+  input,select,textarea{width:100%;padding:11px 12px;border:1.5px solid #c4d0e6;
+    border-radius:10px;font-size:15px;background:#fff;font-family:inherit;transition:border-color .15s,box-shadow .15s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(23,63,134,.13)}
   textarea{min-height:90px;resize:vertical}
   .btn{display:inline-block;border:none;border-radius:11px;padding:13px 22px;font-size:15px;
     font-weight:700;cursor:pointer;transition:transform .1s,filter .15s}
-  .btn:hover{filter:brightness(1.07)} .btn:active{transform:translateY(1px)}
-  .btn-gold{background:linear-gradient(180deg,var(--gold-l),var(--gold));color:#3a2d05}
+  .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-l),var(--gold));color:#5a3d00}
   .btn-navy{background:var(--navy);color:#fff}
   .btn-green{background:var(--green);color:#fff}
-  .btn-ghost{background:transparent;border:1.5px solid #b9b196;color:#5c5626}
+  .btn-ghost{background:transparent;border:1.5px solid #aebfdc;color:var(--navy)}
   .center{text-align:center}
-  .tag{display:inline-block;background:var(--kaki);color:#fff;border-radius:20px;
-    padding:4px 14px;font-size:12px;font-weight:700;letter-spacing:.5px}
+  .logos{display:flex;gap:20px;justify-content:center;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .logos img{height:78px;width:auto;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.2))}
+  .tag{display:inline-block;background:linear-gradient(180deg,var(--gold-l),var(--gold));color:var(--navy-d);border-radius:20px;
+    padding:5px 16px;font-size:12px;font-weight:800;letter-spacing:.5px}
   .seat{display:flex;gap:16px;justify-content:center;margin:18px 0;flex-wrap:wrap}
   .seat .box{background:var(--navy);color:#fff;border-radius:12px;padding:14px 22px;text-align:center;min-width:150px}
   .seat .box b{display:block;font-size:24px;color:var(--gold-l);margin-top:3px}
-  .rules{background:#efe9d6;border-left:5px solid var(--kaki);border-radius:8px;
+  .rules{background:#eef3fc;border-left:5px solid var(--gold);border-radius:8px;
     padding:14px 16px;font-size:14.5px;line-height:1.7;margin:16px 0}
-  .rules b{color:var(--kaki-d)}
+  .rules b{color:var(--navy)}
 
   /* ===== Hall + portes (double battant) ===== */
   .hall{position:relative;height:480px;border-radius:14px;overflow:hidden;margin:16px 0;
     background:
-      radial-gradient(ellipse at 50% 18%,#33422a,#1b240f 70%),
-      linear-gradient(180deg,#283420,#161f0d);
+      radial-gradient(ellipse at 50% 18%,#1f4488,#0c1f47 70%),
+      linear-gradient(180deg,#16315f,#0a1c3e);
     display:flex;align-items:flex-end;justify-content:center}
   .plaque{position:absolute;top:16px;left:50%;transform:translateX(-50%);z-index:6;
     background:linear-gradient(180deg,#e6c87a,#c8a24a);color:#3a2d05;font-weight:800;
     padding:9px 20px;border-radius:9px;font-size:13.5px;letter-spacing:.4px;text-align:center;
     box-shadow:0 6px 18px rgba(0,0,0,.5);border:2px solid #8a6a1f;max-width:90%;line-height:1.35}
   .doorway{position:relative;width:66%;max-width:440px;height:412px;perspective:1500px;
-    background:radial-gradient(ellipse at 50% 42%,#46582f,#10160a);
+    background:radial-gradient(ellipse at 50% 42%,#3a558f,#0b1c40);
     border:18px solid #2c2413;border-bottom:none;border-radius:12px 12px 0 0;
     box-shadow:inset 0 0 50px rgba(0,0,0,.85),0 14px 36px rgba(0,0,0,.55)}
   .doorway .inside{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
@@ -124,21 +127,25 @@
   <section id="screen-connexion" class="screen active">
     <div class="card">
       <div class="center">
-        <span class="tag">MJA MALI — 2026</span>
+        <div class="logos">
+          <img src="logo-cg.png" alt="Chef Guide" onerror="this.style.display='none'">
+          <img src="logo-ja.png" alt="Jeunesse Adventiste" onerror="this.style.display='none'">
+        </div>
+        <span class="tag">MJA MALI · 2026</span>
         <h1 style="margin-top:12px">Examen des Aspirants Chefs Guides</h1>
-        <p class="sub">« L'amour du Christ nous presse » — Persévérez jusqu'au bout.</p>
+        <p class="sub">« L'amour du Christ nous presse ». Persévérez jusqu'au bout.</p>
       </div>
       <label>Nom & Prénom</label>
       <input id="f-nom" placeholder="Ex : Maxime MENSAH" autocomplete="off">
       <label>Église</label>
       <select id="f-eglise">
-        <option value="">— Choisir —</option>
+        <option value="">Choisir...</option>
         <option>Daoudaougou</option><option>Kangaba</option><option>Sénou</option>
         <option>Gouana</option><option>Autre</option>
       </select>
       <label>Grade JA actuel</label>
       <select id="f-grade">
-        <option value="">— Choisir —</option>
+        <option value="">Choisir...</option>
         <option>Aucun grade</option><option>Ami</option><option>Compagnon</option>
         <option>Explorateur</option><option>Pionnier</option><option>Voyageur</option><option>Guide</option>
         <option>Chef Guide</option>
@@ -160,8 +167,8 @@
         <h1 style="margin-top:10px">Bienvenue, <span id="p-nom" style="color:var(--kaki-d)"></span></h1></div>
 
       <div class="seat">
-        <div class="box">Numéro de table<b id="p-table">—</b></div>
-        <div class="box">Votre place<b id="p-place">—</b></div>
+        <div class="box">Numéro de table<b id="p-table">…</b></div>
+        <div class="box">Votre place<b id="p-place">…</b></div>
         <div class="box">Durée de l'épreuve<b>1 heure</b></div>
       </div>
 
@@ -217,7 +224,7 @@
       <h1>Félicitations d'avoir tenu jusqu'au bout !</h1>
       <p class="sub">La persévérance est la marque d'un vrai Chef Guide.</p>
       <p style="margin-top:18px">Score provisoire (questions à choix)</p>
-      <div class="score" id="fin-score">—</div>
+      <div class="score" id="fin-score">…</div>
       <p class="mini" id="fin-detail"></p>
       <div class="rules" style="margin-top:16px;text-align:left">
         Ta copie a bien été enregistrée. Les copies seront <b>corrigées dans les brefs délais</b>. Ton <b>identifiant</b> te sera ensuite communiqué pour télécharger ta copie entièrement corrigée depuis « Consulter ma copie corrigée ».
@@ -235,7 +242,7 @@
       <div class="rules" style="border-color:var(--red);text-align:left">
         Vos points déjà acquis ont été <b>enregistrés</b>. La persévérance consiste à rester jusqu'au bout, malgré les pressions.
       </div>
-      <div class="score" id="dq-score">—</div>
+      <div class="score" id="dq-score">…</div>
       <p class="mini" style="margin-top:10px">Les copies seront corrigées dans les brefs délais ; ton identifiant te sera communiqué pour consulter ta copie.</p>
       <div style="margin-top:14px"><button class="btn btn-navy" onclick="location.reload()">Fermer</button></div>
     </div>
@@ -571,7 +578,7 @@ function openDetail(id){
       if(it.opts){
         const ok=(a==it.correct);
         html+='<div>Réponse : <b style="color:'+(ok?'var(--green)':'var(--red)')+'">'+
-          (a!=null?esc(it.opts[a]):'(vide)')+'</b> '+(ok?'✓':'✗ — attendu : '+esc(it.opts[it.correct]))+'</div>';
+          (a!=null?esc(it.opts[a]):'(vide)')+'</b> '+(ok?'✓':'✗ attendu : '+esc(it.opts[it.correct]))+'</div>';
       }else{
         const key=lv+'_'+it.id; const w=qWeight(it);
         html+='<div style="background:#f5f1e0;border-radius:8px;padding:8px 10px;margin:6px 0">'+
@@ -608,7 +615,7 @@ function copiePending(s){let p=false;for(let lv=1;lv<=(s.level||1);lv++)((s.sele
 function buildCopyHTML(s){
   const g=gradeFull(s); const pend=copiePending(s);
   let h='<style>body{font-family:Arial,sans-serif;color:#222;max-width:760px;margin:20px auto;padding:0 16px}h1{color:#1f3a5f;font-size:20px}h2{color:#5c5626;font-size:15px;margin:16px 0 6px;border-bottom:1px solid #ccc;padding-bottom:3px}.q{margin:9px 0;padding:9px 11px;border:1px solid #ddd;border-radius:8px}.qn{font-weight:bold;color:#142840}.ok{color:#2e7d32;font-weight:bold}.ko{color:#b03030;font-weight:bold}.ans{background:#f5f1e0;padding:6px 9px;border-radius:6px;margin:4px 0;white-space:pre-wrap}.note{background:#eef2f8;padding:12px 14px;border-radius:8px;font-size:17px;margin:14px 0}.mut{color:#888;font-size:12.5px}</style>';
-  h+='<h1>Copie corrigée — Examen Aspirants Chefs Guides 2026</h1>';
+  h+='<h1>Copie corrigée · Examen Aspirants Chefs Guides 2026</h1>';
   h+='<p><b>'+esc(s.nom)+'</b> · '+esc(s.eglise)+' · Grade '+esc(s.grade)+'<br><span class="mut">'+(s.dateISO?new Date(s.dateISO).toLocaleString('fr-FR'):'')+' · Épreuve '+(s.level||1)+(s.status==='disqualified'?' · Disqualifié':'')+'</span></p>';
   h+='<div class="note"><b>Note : '+g.sur20+' / 20</b>'+(pend?' <span class="mut">(provisoire : réponses rédigées en attente de correction)</span>':'')+'</div>';
   for(let lv=1;lv<=(s.level||1);lv++){
