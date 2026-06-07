@@ -21,9 +21,9 @@ const NIVEAU = {
 
 /* Composition de chaque épreuve (le tirage couvre tous les modules) */
 const COMPO = {
-  1:{ qcm:30, court:8, cas:0 },  // 38 questions (~2h) : examen complet, majorite QCM
-  2:{ qcm:30, court:8, cas:3 },  // 41 questions : plus exigeante, majorite QCM
-  3:{ qcm:30, court:8, cas:6 },  // 44 questions : application, majorite QCM
+  1:{ qcm:40, court:10, cas:0 },  // 50 questions (~2h) : examen complet, majorite QCM
+  2:{ qcm:40, court:8,  cas:2 },  // 50 questions : plus exigeante, majorite QCM
+  3:{ qcm:38, court:8,  cas:4 },  // 50 questions : application, majorite QCM
 };
 
 /* Pondération par complexité ; la note est ensuite ramenée sur 20 */
@@ -86,6 +86,20 @@ const POOL = {
     {id:"q-m10-2",mod:"Tenue JA",q:"Le foulard JA se porte :",opts:["La pointe devant","La pointe dans le dos","Noué à la ceinture","Sur la tête"],correct:1},
     {id:"q-m10-3",mod:"Tenue JA",q:"Un uniforme complet compte :",opts:["7 éléments","9 éléments","11 éléments","15 éléments"],correct:2},
     {id:"q-m10-4",mod:"Tenue JA",q:"La tenue A se porte :",opts:["Pour les sorties et les camps","Pour les grands événements et cérémonies","À la maison","Pour le sport"],correct:1},
+    // ===== AJOUTS (à valider) — Module Nœuds & matelotage =====
+    {id:"q-no-1",mod:"Nœuds",q:"À quoi sert principalement le nœud de chaise ?",opts:["Relier deux cordes","Faire une boucle fixe qui ne se resserre pas","Raccourcir une corde","Tendre une toile de tente"],correct:1},
+    {id:"q-no-2",mod:"Nœuds",q:"À quoi sert le nœud plat ?",opts:["Relier deux cordes de même grosseur","Faire une boucle","Grimper à un arbre","Lester une ligne"],correct:0},
+    {id:"q-no-3",mod:"Nœuds",q:"Le nœud plat est aussi appelé :",opts:["Nœud de chaise","Nœud carré","Nœud de cabestan","Nœud de pêcheur"],correct:1},
+    {id:"q-no-4",mod:"Nœuds",q:"Quel nœud sert à amarrer rapidement une corde à un poteau ou une perche ?",opts:["Le nœud plat","Le nœud de chaise","Le nœud de cabestan","Le nœud de huit"],correct:2},
+    {id:"q-no-5",mod:"Nœuds",q:"Pour relier deux cordes de grosseurs différentes, on utilise :",opts:["Le nœud plat","Le nœud d'écoute","Le nœud de chaise","Le nœud de cabestan"],correct:1},
+    {id:"q-no-6",mod:"Nœuds",q:"Le nœud de huit sert surtout à :",opts:["Faire un nœud d'arrêt en bout de corde","Relier deux cordes","Faire une boucle coulante","Attacher deux perches"],correct:0},
+    // ===== AJOUTS (à valider) — compléments ancrés sur des faits déjà présents dans la banque =====
+    {id:"q-m4-5",mod:"Fondements JA",q:"La Loi de la Jeunesse Adventiste compte combien d'articles ?",opts:["6","7","8","10"],correct:2},
+    {id:"q-m7-5",mod:"Cérémonies",q:"Combien de drapeaux comporte une cérémonie JA complète ?",opts:["4","5","6","7"],correct:2},
+    {id:"q-m4-6",mod:"Fondements JA",q:"À quel âge un jeune passe-t-il du Club des Aventuriers au Club des Explorateurs ?",opts:["8 ans","9 ans","10 ans","12 ans"],correct:2},
+    {id:"q-m10-5",mod:"Tenue JA",q:"Quelle est la couleur de la tenue de terrain JA, symbole de persévérance ?",opts:["Bleu marine","Kaki","Vert olive","Gris"],correct:1},
+    {id:"q-m2-5",mod:"Philosophie Aventuriers",q:"« Instruis l'enfant selon la voie qu'il doit suivre… » est tiré de :",opts:["Jean 3.16","Proverbes 22.6","Psaume 23","Matthieu 19.14"],correct:1},
+    {id:"q-m3-9",mod:"Logos JA",q:"Combien de flammes figurent sur l'emblème de la Jeunesse Adventiste ?",opts:["Deux","Trois","Quatre","Cinq"],correct:1},
   ],
 
   /* --------------------- RÉPONSES COURTES --------------------- */
@@ -107,6 +121,8 @@ const POOL = {
     {id:"co-m9-2",mod:"Incorporation",q:"Quel est le dialogue d'engagement entre le Directeur et les candidats ?"},
     {id:"co-m10-1",mod:"Tenue JA",q:"Expliquez pourquoi le foulard se porte la pointe dans le dos."},
     {id:"co-m10-2",mod:"Tenue JA",q:"Pourquoi un uniforme auquel il manque un seul élément n'est-il plus un uniforme ?"},
+    {id:"co-no-1",mod:"Nœuds",q:"Citez quatre types de nœuds que vous connaissez."},
+    {id:"co-no-2",mod:"Nœuds",q:"À quoi sert le nœud de chaise ? Donnez un exemple d'utilisation concrète."},
   ],
 
   /* ------------------------- CAS PRATIQUES ------------------------- */
@@ -123,5 +139,6 @@ const POOL = {
     {id:"ca-m9-2",mod:"Incorporation",q:"Expliquez pourquoi la cérémonie d'incorporation est comparée au baptême."},
     {id:"ca-m10-1",mod:"Tenue JA",q:"Un chef porte l'insigne de natation sans savoir nager. Quel principe est violé et quelles peuvent être les conséquences ?"},
     {id:"ca-m10-2",mod:"Tenue JA",q:"Décrivez la tenue A complète d'un Explorateur pour une investiture (bas, haut, foulard, accessoires)."},
+    {id:"ca-no-1",mod:"Nœuds",q:"Vous installez un campement. Décrivez deux nœuds que vous utiliseriez, leur usage précis et où les employer."},
   ],
 };
