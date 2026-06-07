@@ -21,9 +21,9 @@ const NIVEAU = {
 
 /* Composition de chaque épreuve (le tirage couvre tous les modules) */
 const COMPO = {
-  1:{ qcm:20, court:10, cas:0 },  // 30 questions : l'examen normal et complet
-  2:{ qcm:14, court:10, cas:3 },  // 27 questions : version plus exigeante
-  3:{ qcm:10, court:10, cas:6 },  // 26 questions : application / analyse
+  1:{ qcm:30, court:8, cas:0 },  // 38 questions (~2h) : examen complet, majorite QCM
+  2:{ qcm:30, court:8, cas:3 },  // 41 questions : plus exigeante, majorite QCM
+  3:{ qcm:30, court:8, cas:6 },  // 44 questions : application, majorite QCM
 };
 
 /* Pondération par complexité ; la note est ensuite ramenée sur 20 */

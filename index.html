@@ -188,7 +188,7 @@
       <div class="seat">
         <div class="box">Numéro de table<b id="p-table">…</b></div>
         <div class="box">Votre place<b id="p-place">…</b></div>
-        <div class="box">Durée de l'épreuve<b>1 heure</b></div>
+        <div class="box">Durée de l'épreuve<b>2 heures</b></div>
       </div>
 
       <div class="hall clickable" id="porte-hall" role="button" tabindex="0" aria-label="Tapez la porte pour entrer dans la salle"
@@ -204,7 +204,7 @@
       <p class="tap-consigne">Tapez la porte pour l'ouvrir lorsque vous êtes prêt.</p>
 
       <div class="rules">
-        <b>⏱ Durée de l'épreuve : 1 heure.</b> Le temps est décompté et l'épreuve se termine automatiquement à la fin du temps imparti.<br><br>
+        <b>⏱ Durée de l'épreuve : 2 heures.</b> Le temps est décompté et l'épreuve se termine automatiquement à la fin du temps imparti.<br><br>
         <b>La règle de la persévérance (le Kaki) :</b><br>
         Une fois entré dans la salle, vous y restez jusqu'à ce que vous ayez <b>terminé l'épreuve</b>. Ne quittez pas la page avant la fin.<br><br>
         Celui qui endure jusqu'au bout, celui-là sera récompensé. Entrez avec courage et donnez le meilleur de vous-même.
@@ -224,6 +224,7 @@
         <span class="pill pill-time" id="e-timepill">⏱ <b id="e-timer">00:00</b></span>
         <span class="pill">✓ Répondu : <b id="e-progress">0 / 0</b></span>
         <span class="pill">Sorties : <span id="e-exits">0</span>/3</span>
+        <span class="pill" id="e-live" title="Personnes connectées · en train de composer">👥 <b id="e-live-conn">–</b> en salle · ✍️ <b id="e-live-comp">–</b> en compo.</span>
       </div>
       <div class="ex-progbar"><span id="e-progbar"></span></div>
     </div>
@@ -340,7 +341,7 @@
 <script>
 const ADMIN_PASS = "CG2026"; // À modifier
 const LS_KEY = "examCG2026_sessions";
-const DUREE_MIN = 60;        // durée de l'épreuve en minutes
+const DUREE_MIN = 120;       // durée de l'épreuve en minutes (2 heures, tous niveaux)
 const RAB_MIN   = 15;        // rallonge proposée à la fin (une seule fois)
 
 let S = null;          // session courante
@@ -379,6 +380,19 @@ async function fetchOne(code){
     if(data&&data[0])return fromRow(data[0]);}catch(e){console.warn('Supabase fetchOne:',e);}return null;}
   return localAll().find(x=>x.id===code)||null;
 }
+/* compte les inscrits (numéro de place séquentiel) — global via Supabase, repli local, garde-temps 4s */
+async function countRegistered(){
+  const localN=localAll().filter(x=>!(x.manual&&x.manual.__deleted)).length;
+  if(!cloudReady()) return localN;
+  try{
+    const res=await Promise.race([
+      cloudClient().from('exam_sessions').select('id,manual'),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),4000))
+    ]);
+    if(res&&res.data) return res.data.filter(x=>!(x.manual&&x.manual.__deleted)).length;
+  }catch(e){ console.warn('countRegistered (repli local):', e&&e.message); }
+  return localN;
+}
 
 /* --- écriture unifiée : local + cloud --- */
 function upsert(sess){ localUpsert(sess); if(cloudReady()) pushCloud(sess); }
@@ -405,23 +419,31 @@ function buildEpreuve(lv){
 }
 
 /* ---------- connexion ---------- */
-function connexion(){
+let _connecting=false;
+async function connexion(){
+  if(_connecting) return;                              // évite une double inscription
   const nom=document.getElementById('f-nom').value.trim();
   const eglise=document.getElementById('f-eglise').value;
   const grade=document.getElementById('f-grade').value;
   if(!nom||!eglise||!grade){toast("Renseignez le nom, l'église et le grade.");return;}
-  const selected={1:buildEpreuve(1),2:buildEpreuve(2),3:buildEpreuve(3)};
-  S={id:rid(),nom,eglise,grade,
-     dateISO:new Date().toISOString(),
-     table:1+Math.floor(Math.random()*40),
-     place:"Rangée "+(1+Math.floor(Math.random()*5))+" · Siège "+(1+Math.floor(Math.random()*6)),
-     level:1,exits:0,selected,answers:{1:{},2:{},3:{}},status:"in-progress",score:0,
-     maxAuto:selected[1].filter(q=>q.opts).length};
-  upsert(S);
-  document.getElementById('p-nom').textContent=nom;
-  document.getElementById('p-table').textContent="N° "+S.table;
-  document.getElementById('p-place').textContent=S.place;
-  show('screen-porte');
+  _connecting=true;
+  try{
+    toast("Attribution de votre place…");
+    const num=(await countRegistered())+1;            // numéro de table = ordre d'arrivée (1er => table 1)
+    const selected={1:buildEpreuve(1),2:buildEpreuve(2),3:buildEpreuve(3)};
+    const perRow=6;
+    S={id:rid(),nom,eglise,grade,
+       dateISO:new Date().toISOString(),
+       table:num,
+       place:"Rangée "+Math.ceil(num/perRow)+" · Siège "+(((num-1)%perRow)+1),
+       level:1,exits:0,selected,answers:{1:{},2:{},3:{}},status:"in-progress",score:0,
+       maxAuto:selected[1].filter(q=>q.opts).length};
+    upsert(S);
+    document.getElementById('p-nom').textContent=nom;
+    document.getElementById('p-table').textContent="N° "+S.table;
+    document.getElementById('p-place').textContent=S.place;
+    show('screen-porte');
+  } finally { _connecting=false; }
 }
 
 /* ---------- entrer dans la salle ---------- */
@@ -436,6 +458,7 @@ function startExam(){
   const ec=document.getElementById('e-exits'); if(ec) ec.textContent=S.exits;
   startTimer(DUREE_MIN);
   renderQuestions();
+  updateLive(); if(!window.__liveInt) window.__liveInt=setInterval(updateLive,20000);
 }
 function startTimer(min){
   clearInterval(timerInt);
@@ -451,7 +474,8 @@ function startTimer(min){
       return;
     }
     const el=document.getElementById('e-timer');
-    el.textContent=pad(Math.floor(r/60))+':'+pad(r%60);
+    const h=Math.floor(r/3600), mn=Math.floor((r%3600)/60), sc=r%60;
+    el.textContent = h>0 ? (h+':'+pad(mn)+':'+pad(sc)) : (pad(mn)+':'+pad(sc));
     const tp=document.getElementById('e-timepill'); if(tp) tp.classList.toggle('urgent', r<=300); // alerte 5 dernières min
   },500);
 }
@@ -499,6 +523,18 @@ function updateProgress(){
   items.forEach(it=>{ const v=a[it.id]; if(it.opts){ if(v!=null&&v!=='') done++; } else if(v&&String(v).trim()) done++; });
   const p=document.getElementById('e-progress'); if(p) p.textContent=done+' / '+items.length;
   const bar=document.getElementById('e-progbar'); if(bar) bar.style.width=(items.length?Math.round(done/items.length*100):0)+'%';
+}
+/* compteurs en direct : personnes en salle (connectées) et en train de composer */
+async function updateLive(){
+  if(!cloudReady()) return;
+  try{
+    const {data,error}=await cloudClient().from('exam_sessions').select('id,status,manual');
+    if(error||!data) return;
+    const live=data.filter(r=>!(r.manual&&r.manual.__deleted));
+    const conn=live.length, comp=live.filter(r=>r.status==='in-progress').length;
+    const c=document.getElementById('e-live-conn'); if(c) c.textContent=conn;
+    const m=document.getElementById('e-live-comp'); if(m) m.textContent=comp;
+  }catch(e){}
 }
 
 /* ---------- détection des sorties (mécanisme volontairement non expliqué au candidat) ---------- */
