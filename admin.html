@@ -16,6 +16,12 @@
   .top .right{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
   .badge{border-radius:20px;padding:5px 13px;font-size:12.5px;font-weight:700}
   .b-rt{background:#0a7d4f;color:#fff}.b-loc{background:#8a6a1f;color:#fff}
+  /* Voyant « En direct » (clignote tant que le temps réel est connecté) */
+  .live{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--green);padding:5px 12px;border-radius:20px;background:#e3f3e4}
+  .live .dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:livePulse 1.3s ease-in-out infinite}
+  @keyframes livePulse{0%{box-shadow:0 0 0 0 rgba(31,138,76,.55);opacity:1}70%{box-shadow:0 0 0 7px rgba(31,138,76,0);opacity:.4}100%{box-shadow:0 0 0 0 rgba(31,138,76,0);opacity:1}}
+  .live.off{color:#8a6a1f;background:#f1e7cf}
+  .live.off .dot{background:#b9933a;animation:none;box-shadow:none}
   .wrap{max-width:1180px;margin:0 auto;padding:18px}
   .btn{border:none;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:filter .15s,transform .1s}
   .btn:hover{filter:brightness(1.08)} .btn:active{transform:translateY(1px)}
@@ -76,10 +82,11 @@
   .view{padding:20px 22px;display:none}
   .view.active{display:block}
   /* Menu hamburger (mobile) */
-  .hamburger{display:none;background:none;border:none;font-size:23px;color:var(--navy-d);cursor:pointer;padding:2px 9px;line-height:1;border-radius:8px}
+  .hamburger{display:inline-flex;align-items:center;background:none;border:none;font-size:23px;color:var(--navy-d);cursor:pointer;padding:2px 9px;line-height:1;border-radius:8px}
   .hamburger:hover{background:#eef2f9}
   .nav-overlay{position:fixed;inset:0;background:rgba(8,18,40,.5);z-index:55;opacity:0;visibility:hidden;transition:opacity .25s}
   .nav-overlay.show{opacity:1;visibility:visible}
+  @media(min-width:821px){ #app.nav-collapsed .sidebar{display:none} }   /* sidebar rétractable (ordinateur) */
   @media(max-width:820px){
     .hamburger{display:inline-flex;align-items:center}
     .navbar{flex-wrap:wrap;row-gap:8px}
@@ -187,7 +194,7 @@
         <button class="hamburger" onclick="toggleNav()" aria-label="Ouvrir le menu">☰</button>
         <h1 id="page-title">Vue d'ensemble</h1>
         <div class="right">
-          <span id="mode" class="badge b-loc">● Mode local</span>
+          <span id="mode" class="live off" title="Suivi temps réel"><span class="dot"></span><span id="mode-txt">Connexion…</span></span>
           <button class="btn btn-ghost" onclick="load()">↻ Actualiser</button>
         </div>
       </header>
@@ -361,14 +368,15 @@ function login(){
   try{sessionStorage.setItem(AUTH_KEY,'1');}catch(e){}
   openDashboard();
 }
+function setLive(on,label){ const el=document.getElementById('mode'); if(el)el.classList.toggle('off',!on); const t=document.getElementById('mode-txt'); if(t)t.textContent=label; }
 function openDashboard(){
   document.getElementById('gate').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
-  document.getElementById('mode').className='badge '+(cloudReady()?'b-rt':'b-loc');
-  document.getElementById('mode').textContent=cloudReady()?'● Supabase (temps réel)':'● Mode local';
+  setLive(cloudReady(), cloudReady()?'En direct':'Mode local');
   load();
   if(cloudReady()&&!rtDone){rtDone=true;
-    cloudClient().channel('admin-rt').on('postgres_changes',{event:'*',schema:'public',table:'exam_sessions'},()=>load()).subscribe();}
+    cloudClient().channel('admin-rt').on('postgres_changes',{event:'*',schema:'public',table:'exam_sessions'},()=>load())
+      .subscribe(function(status){ setLive(status==='SUBSCRIBED', status==='SUBSCRIBED'?'En direct':'Reconnexion…'); });}
   if(!window.__safety){window.__safety=setInterval(load,20000);} // filet de sécurité
   if(!window.__ticker){window.__ticker=setInterval(tickTimes,1000);} // décompte du temps en direct
 }
@@ -433,7 +441,14 @@ function showView(name){
   closeNav();
 }
 function gotoCand(id){ showView('stats'); const sel=document.getElementById('cand-sel'); if(sel){sel.value=id; renderCandStats();} }
-function toggleNav(){ const s=document.querySelector('.sidebar'), o=document.getElementById('nav-overlay'); if(!s)return; const open=s.classList.toggle('open'); if(o)o.classList.toggle('show',open); }
+function toggleNav(){
+  if(window.matchMedia('(max-width:820px)').matches){           // mobile : tiroir off-canvas
+    const s=document.querySelector('.sidebar'), o=document.getElementById('nav-overlay'); if(!s)return;
+    const open=s.classList.toggle('open'); if(o)o.classList.toggle('show',open);
+  } else {                                                        // ordinateur : repli/déploiement de la sidebar
+    document.getElementById('app').classList.toggle('nav-collapsed');
+  }
+}
 function closeNav(){ const s=document.querySelector('.sidebar'); if(s)s.classList.remove('open'); const o=document.getElementById('nav-overlay'); if(o)o.classList.remove('show'); }
 
 /* ---------- statistiques par candidat (profil par module) ---------- */
