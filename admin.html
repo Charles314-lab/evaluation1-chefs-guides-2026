@@ -22,8 +22,30 @@
   .btn-navy{background:var(--navy);color:#fff}.btn-green{background:var(--green);color:#fff}
   .btn-ghost{background:#fff;border:1.5px solid #aebfdc;color:var(--navy)}
   input,select{padding:9px 11px;border:1.5px solid #c4d0e6;border-radius:9px;font-size:14px;font-family:inherit;background:#fff}
-  .gate{max-width:380px;margin:80px auto;background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 14px 40px rgba(0,0,0,.18)}
-  .gate h2{color:var(--navy);margin-bottom:6px}.gate p{color:#777;font-size:13px;margin-bottom:16px}
+  /* ---- Connexion (Espace Responsable) ---- */
+  #gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:22px;overflow:auto;
+    background:radial-gradient(1100px 560px at 50% -8%,#2152a6 0%,var(--navy) 46%,var(--navy-d) 100%)}
+  #gate::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--kaki),var(--gold),var(--navy))}
+  .login-card{position:relative;width:100%;max-width:430px;background:#fff;border-radius:20px;padding:36px 34px 28px;
+    text-align:center;box-shadow:0 28px 70px rgba(0,0,0,.42);border-top:6px solid var(--gold)}
+  .login-logos{display:flex;justify-content:center;gap:16px;margin-bottom:10px}
+  .login-logos img{height:64px;width:auto}
+  .login-org{font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:var(--navy);font-weight:800}
+  .login-card h2{color:var(--navy-d);font-size:24px;margin:12px 0 2px}
+  .login-card .sub{color:#7a869c;font-size:13px;margin-bottom:22px}
+  .field{text-align:left;margin-bottom:13px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--navy);margin-bottom:5px;letter-spacing:.3px}
+  .ipw{position:relative;display:flex;align-items:center}
+  .ipw .ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;opacity:.55;pointer-events:none}
+  .ipw input{width:100%;padding:12px 40px 12px 38px;font-size:15px;border:1.6px solid #c4d0e6;border-radius:11px;background:#f8fafd}
+  .ipw input:focus{outline:none;border-color:var(--navy);background:#fff;box-shadow:0 0 0 3px rgba(23,63,134,.13)}
+  .ipw .toggle{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;opacity:.6;padding:4px;line-height:1}
+  .ipw .toggle:hover{opacity:.9}
+  .btn-login{width:100%;margin-top:8px;padding:13px;font-size:15.5px;font-weight:800;cursor:pointer;border:none;border-radius:12px;
+    color:#3a2d05;background:linear-gradient(180deg,var(--gold-l),var(--gold));box-shadow:0 9px 22px rgba(242,183,5,.4);transition:filter .15s,transform .05s}
+  .btn-login:hover{filter:brightness(1.06)} .btn-login:active{transform:translateY(1px)}
+  .login-err{color:var(--red);font-size:13px;font-weight:600;margin-top:12px;min-height:18px}
+  .login-foot{margin-top:16px;font-size:10.5px;color:#9aa6bb;letter-spacing:.3px}
   .hidden{display:none!important}
   .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:6px 0 18px}
   .card{background:#fff;border-radius:13px;padding:15px 16px;box-shadow:0 4px 14px rgba(0,0,0,.07);border:1px solid #dbe4f3}
@@ -68,13 +90,37 @@
 </head>
 <body>
 
-<!-- GATE -->
-<div id="gate" class="gate">
-  <h2>Dashboard Responsable</h2>
-  <p>Examen des Aspirants Chefs Guides 2026</p>
-  <input id="pass" type="password" placeholder="Mot de passe" style="width:100%;text-align:center" onkeydown="if(event.key==='Enter')login()">
-  <div style="margin-top:14px"><button class="btn btn-gold" onclick="login()">Entrer</button></div>
-  <p id="gate-err" style="color:var(--red);margin-top:10px"></p>
+<!-- CONNEXION (Espace Responsable) -->
+<div id="gate">
+  <div class="login-card">
+    <div class="login-logos">
+      <img src="logo-cg.jpg" alt="Chef Guide" onerror="this.style.display='none'">
+      <img src="logo-ja.jpg" alt="Jeunesse Adventiste" onerror="this.style.display='none'">
+    </div>
+    <div class="login-org">Ministère de la Jeunesse Adventiste · Mali</div>
+    <h2>Espace Responsable</h2>
+    <div class="sub">Examen des Aspirants Chefs Guides 2026</div>
+
+    <div class="field">
+      <label for="user">Utilisateur</label>
+      <div class="ipw">
+        <span class="ico">👤</span>
+        <input id="user" type="text" autocomplete="username" autofocus placeholder="Nom d'utilisateur" onkeydown="if(event.key==='Enter')login()">
+      </div>
+    </div>
+    <div class="field">
+      <label for="pass">Mot de passe</label>
+      <div class="ipw">
+        <span class="ico">🔒</span>
+        <input id="pass" type="password" autocomplete="current-password" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()">
+        <button type="button" class="toggle" onclick="togglePass()" title="Afficher / masquer">👁</button>
+      </div>
+    </div>
+
+    <button class="btn-login" onclick="login()">Se connecter</button>
+    <p id="gate-err" class="login-err"></p>
+    <div class="login-foot">Accès réservé · « L'amour du Christ nous presse »</div>
+  </div>
 </div>
 
 <!-- APP -->
@@ -87,6 +133,7 @@
     <div class="right noprint">
       <button class="btn btn-ghost" onclick="load()">↻ Actualiser</button>
       <button class="btn btn-green" onclick="exportCSV()">⤓ Export Excel (CSV)</button>
+      <button class="btn btn-ghost" onclick="logout()">⎋ Déconnexion</button>
     </div>
   </div>
 
@@ -135,7 +182,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
-const ADMIN_PASS="CG2026";
+const ADMIN_USER="responsable";   // identifiant du responsable (modifiable ici)
+const ADMIN_PASS="CG2026";        // mot de passe (modifiable ici)
+const AUTH_KEY="cg_admin_auth";   // garde la session ouverte apres un rafraichissement
 const LS_KEY="examCG2026_sessions";
 let SESSIONS=[], current=null, rtDone=false;
 
@@ -196,7 +245,14 @@ function toCSV(list){
 
 /* ---------- UI ---------- */
 function login(){
-  if(document.getElementById('pass').value!==ADMIN_PASS){document.getElementById('gate-err').textContent="Mot de passe incorrect.";return;}
+  const u=(document.getElementById('user').value||'').trim();
+  const p=document.getElementById('pass').value||'';
+  if(u.toLowerCase()!==ADMIN_USER.toLowerCase()||p!==ADMIN_PASS){
+    document.getElementById('gate-err').textContent="Identifiant ou mot de passe incorrect.";return;}
+  try{sessionStorage.setItem(AUTH_KEY,'1');}catch(e){}
+  openDashboard();
+}
+function openDashboard(){
   document.getElementById('gate').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('mode').className='badge '+(cloudReady()?'b-rt':'b-loc');
@@ -204,8 +260,15 @@ function login(){
   load();
   if(cloudReady()&&!rtDone){rtDone=true;
     cloudClient().channel('admin-rt').on('postgres_changes',{event:'*',schema:'public',table:'exam_sessions'},()=>load()).subscribe();}
-  setInterval(load, 20000); // filet de sécurité
+  if(!window.__safety){window.__safety=setInterval(load,20000);} // filet de sécurité
 }
+function logout(){
+  try{sessionStorage.removeItem(AUTH_KEY);}catch(e){}
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('gate').classList.remove('hidden');
+  document.getElementById('pass').value=''; document.getElementById('gate-err').textContent='';
+}
+function togglePass(){const i=document.getElementById('pass');i.type=(i.type==='password')?'text':'password';}
 async function load(){ SESSIONS=(await fetchAll()).filter(s=>!(s.manual&&s.manual.__deleted)); render(); }
 
 function esc(x){return(x==null?'':String(x)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -410,6 +473,9 @@ function exportCSV(){
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
   a.download='resultats_examen_chefs_guides_2026.csv'; a.click(); URL.revokeObjectURL(a.href);
 }
+
+/* reste connecté après un rafraîchissement (session du navigateur) */
+try{ if(sessionStorage.getItem(AUTH_KEY)==='1') openDashboard(); }catch(e){}
 </script>
 </body>
 </html>
