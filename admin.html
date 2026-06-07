@@ -424,6 +424,7 @@ function render(){
       ? '<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="openC(\''+s.id+'\')">Voir</button>'
       : '<button class="btn btn-navy" style="padding:5px 10px;font-size:12px" onclick="openC(\''+s.id+'\')">Corriger</button>')
     +' <button class="btn btn-ghost" title="Profil statistique" style="padding:5px 8px;font-size:12px" onclick="gotoCand(\''+s.id+'\')">📈</button>'
+    +(s.status==='in-progress'?' <button class="btn btn-green" title="Forcer le statut Terminé" style="padding:5px 9px;font-size:12px" onclick="forceTermine(\''+s.id+'\')">✓ Terminer</button>':'')
     +' <button class="btn btn-ghost" style="padding:5px 9px;font-size:12px;color:var(--red);border-color:#e6b9b9" onclick="delC(\''+s.id+'\')">Supprimer</button></td></tr>'
   ).join('') : '<tr><td colspan="12" class="mini" style="text-align:center;padding:20px">Aucun candidat.</td></tr>';
   tickTimes();
@@ -569,6 +570,21 @@ async function delC(id){
   await saveCorrection(s);
   SESSIONS=SESSIONS.filter(x=>x.id!==id);
   if(current&&current.id===id) closeC();
+  render();
+}
+
+/* ---------- forcer le statut Terminé (option responsable, En cours -> Terminé) ---------- */
+async function pushStatusFields(s){
+  if(cloudReady()){ try{ await cloudClient().from('exam_sessions').update({status:s.status,submitted_at:s.submittedISO||null,score:s.score}).eq('id',s.id); }catch(e){console.warn('Supabase statut:',e);} }
+  else{ const a=localAll(); const i=a.findIndex(x=>x.id===s.id); if(i>=0){a[i]=s; localStorage.setItem(LS_KEY,JSON.stringify(a));} }
+}
+async function forceTermine(id){
+  const s=SESSIONS.find(x=>x.id===id); if(!s)return;
+  if(!confirm('Marquer « '+(s.nom||'ce candidat')+' » comme TERMINÉ ?\n(statut En cours → Terminé ; la note QCM est recalculée automatiquement)')) return;
+  s.status='submitted';
+  if(!s.submittedISO) s.submittedISO=new Date().toISOString();
+  s.score=gradeFull(s).sur20;
+  await pushStatusFields(s);
   render();
 }
 
