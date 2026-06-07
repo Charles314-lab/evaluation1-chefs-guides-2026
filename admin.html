@@ -229,6 +229,7 @@
       <section class="view" id="view-stats">
         <div class="cards" id="stats-synth"></div>
         <div class="two" id="stats-extra" style="margin-bottom:18px"></div>
+        <div class="two" id="stats-groups" style="margin-bottom:18px"></div>
         <div class="panel">
           <h3>Profil de performance par candidat</h3>
           <div class="tools noprint"><select id="cand-sel" onchange="renderCandStats()" style="flex:1;min-width:240px"></select></div>
@@ -325,8 +326,11 @@ function computeStats(list){
   const bins=[0,0,0,0];
   sc.forEach(x=>{const i=x>=15?3:x>=10?2:x>=5?1:0;bins[i]++;});
   const durs=fin.map(timeTakenMs).filter(x=>x!=null&&x>0);
+  const srt=sc.slice().sort((a,b)=>a-b);
+  const median=srt.length?(srt.length%2?srt[(srt.length-1)/2]:Math.round((srt[srt.length/2-1]+srt[srt.length/2])/2*10)/10):0;
   return{total:list.length,
     avgDur:durs.length?Math.round(durs.reduce((a,b)=>a+b,0)/durs.length):0, fastDur:durs.length?Math.min.apply(null,durs):0, slowDur:durs.length?Math.max.apply(null,durs):0, nbDur:durs.length,
+    median:median, avgExits:list.length?Math.round(list.reduce((a,s)=>a+(s.exits||0),0)/list.length*10)/10:0, nbRallonge:list.filter(s=>(s.rallonge||0)>0).length, tauxFin:list.length?Math.round(list.filter(s=>s.status!=='in-progress').length/list.length*100):0,
     termine:list.filter(s=>s.status==='submitted').length,
     enCours:list.filter(s=>s.status==='in-progress').length,
     dq:list.filter(s=>s.status==='disqualified').length,
@@ -461,10 +465,16 @@ function renderCandStats(){
   } else h+='<p class="mini">Pas de données pour ce candidat.</p>';
   box.innerHTML=h;
 }
+function groupStats(list,key){
+  const g={};
+  list.forEach(s=>{ const k=(s[key]||'—'); g[k]=g[k]||{n:0,sum:0,ok:0,nf:0}; g[k].n++;
+    if(s.status==='submitted'||s.status==='disqualified'){ g[k].nf++; const sc=s.score||0; g[k].sum+=sc; if(sc>=10)g[k].ok++; } });
+  return Object.keys(g).map(k=>({k:k,n:g[k].n,moy:g[k].nf?Math.round(g[k].sum/g[k].nf*10)/10:null,reussite:g[k].nf?Math.round(g[k].ok/g[k].nf*100):null})).sort((a,b)=>(b.moy==null?-1:b.moy)-(a.moy==null?-1:a.moy));
+}
 function refreshStatsView(){
   const st=computeStats(SESSIONS), ms=moduleStats(SESSIONS);
   const synth=document.getElementById('stats-synth');
-  if(synth)synth.innerHTML=card('Évalués',st.nbNotes)+card('Moyenne /20',st.nbNotes?st.moy:'-','gold')+card('Réussite ≥10',st.nbNotes?st.reussite+'%':'-','good')+card('Note max',st.nbNotes?st.max:'-','good')+card('Note min',st.nbNotes?st.min:'-','bad');
+  if(synth)synth.innerHTML=card('Évalués',st.nbNotes)+card('Moyenne /20',st.nbNotes?st.moy:'-','gold')+card('Médiane /20',st.nbNotes?st.median:'-','gold')+card('Réussite ≥10',st.nbNotes?st.reussite+'%':'-','good')+card('Note max',st.nbNotes?st.max:'-','good')+card('Note min',st.nbNotes?st.min:'-','bad')+card('Temps moyen',st.nbDur?fmtDur(st.avgDur):'-')+card('Le + rapide',st.nbDur?fmtDur(st.fastDur):'-','good')+card('Le + long',st.nbDur?fmtDur(st.slowDur):'-','bad')+card('Avancement',st.total?st.tauxFin+'%':'-','good')+card('Sorties moy.',st.avgExits)+card('Rallonges',st.nbRallonge);
   const ex=document.getElementById('stats-extra');
   if(ex){
     const easiest=ms.length?ms[ms.length-1]:null,hardest=ms.length?ms[0]:null;
@@ -473,6 +483,14 @@ function refreshStatsView(){
       (ms.length?'<p style="font-size:14px;margin-bottom:6px">✅ Mieux réussi : <b style="color:var(--green)">'+esc(easiest.mod)+'</b> ('+easiest.pct+'%)</p><p style="font-size:14px">⚠️ Plus difficile : <b style="color:var(--red)">'+esc(hardest.mod)+'</b> ('+hardest.pct+'%)</p>':'<p class="mini">Aucune donnée.</p>')+'</div>'+
       '<div class="panel"><h3>Top 3 candidats</h3>'+
       (top.length?'<ol style="margin:0;padding-left:18px;font-size:14px;line-height:2">'+top.map(s=>'<li><b>'+esc(s.nom)+'</b> · '+(s.score!=null?s.score:0)+'/20 <span class="mini">'+esc(s.eglise)+'</span></li>').join('')+'</ol>':'<p class="mini">Aucune donnée.</p>')+'</div>';
+  }
+  const sg=document.getElementById('stats-groups');
+  if(sg){
+    const tbl=function(title,rows,kl){ return '<div class="panel"><h3>'+title+'</h3>'+(rows.length?
+      '<div style="overflow:auto"><table style="font-size:13px"><thead><tr><th>'+kl+'</th><th>Effectif</th><th>Moyenne</th><th>Réussite</th></tr></thead><tbody>'+
+      rows.map(function(r){return '<tr><td>'+esc(r.k)+'</td><td>'+r.n+'</td><td>'+(r.moy!=null?r.moy+'/20':'-')+'</td><td>'+(r.reussite!=null?r.reussite+'%':'-')+'</td></tr>';}).join('')+
+      '</tbody></table></div>':'<p class="mini">Aucune donnée.</p>')+'</div>'; };
+    sg.innerHTML=tbl('Par église',groupStats(SESSIONS,'eglise'),'Église')+tbl('Par grade JA',groupStats(SESSIONS,'grade'),'Grade');
   }
   const sel=document.getElementById('cand-sel');
   if(sel){const prev=sel.value;
