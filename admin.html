@@ -48,6 +48,13 @@
   .btn-login:hover{filter:brightness(1.06)} .btn-login:active{transform:translateY(1px)}
   .login-err{color:var(--red);font-size:13px;font-weight:600;margin-top:12px;min-height:18px}
   .login-foot{margin-top:16px;font-size:10.5px;color:#9aa6bb;letter-spacing:.3px}
+  /* Colonne Temps (tableau candidats) */
+  .tcell{min-width:104px}
+  .tcell .tlive{font-weight:800;font-size:12.5px;color:var(--navy-d)}
+  .tcell .tbar{height:5px;border-radius:5px;background:#e3e9f4;overflow:hidden;margin-top:4px}
+  .tcell .tbar>span{display:block;height:100%;width:0;border-radius:5px;transition:width .9s linear}
+  .tcell.over .tlive{color:var(--red)}
+  .tdone{font-weight:700;font-size:12.5px;color:#5a6b86;white-space:nowrap}
   /* ---- Dashboard : sidebar + navbar + vues ---- */
   .layout{display:flex;min-height:100vh}
   .sidebar{width:236px;flex:none;background:linear-gradient(180deg,var(--navy),var(--navy-d));color:#fff;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
@@ -210,7 +217,7 @@
           <div style="overflow:auto;max-height:64vh">
             <table>
               <thead><tr><th>#</th><th>Nom</th><th>Identifiant</th><th>Église</th><th>Grade</th><th>Statut</th><th>Épreuve</th>
-                <th>Sorties</th><th>Rallonge</th><th>Note /20</th><th class="noprint">Action</th></tr></thead>
+                <th>Sorties</th><th>Rallonge</th><th>Note /20</th><th>Temps</th><th class="noprint">Action</th></tr></thead>
               <tbody id="tbody"></tbody>
             </table>
           </div>
@@ -286,6 +293,30 @@ function gradeFull(s){let raw=0,max=0,autoOk=0,autoN=0;
   return{sur20:max?Math.round((raw/max)*20):0,raw,max,autoOk,autoN};}
 function isValide(s){return !!(s.manual&&s.manual.__valide);}
 
+/* ---------- temps de composition ---------- */
+const EXAM_MIN=120;  // durée de l'épreuve en minutes — garder synchro avec DUREE_MIN d'index.html
+function startMs(s){ const t=Date.parse(s.dateISO||''); return isNaN(t)?0:t; }
+function totalDureeMs(s){ return (EXAM_MIN+(s.rallonge||0))*60000; }
+function timeTakenMs(s){ const a=startMs(s), b=Date.parse(s.submittedISO||''); return (a&&!isNaN(b))?Math.max(0,b-a):null; }
+function fmtDur(ms){ if(ms==null||ms<0)ms=0; const s=Math.round(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60); return h>0?(h+'h'+(m<10?'0':'')+m):(m+' min'); }
+function fmtClock(ms){ if(ms<0)ms=0; const s=Math.round(ms/1000), h=Math.floor(s/3600), m=Math.floor((s%3600)/60), x=s%60, p=n=>(n<10?'0':'')+n; return h>0?(h+':'+p(m)+':'+p(x)):(p(m)+':'+p(x)); }
+function timeCell(s){
+  if(s.status==='in-progress'){ const st=startMs(s); if(!st)return '<td>–</td>';
+    return '<td class="tcell"><span class="tlive" data-start="'+st+'" data-total="'+totalDureeMs(s)+'"></span><div class="tbar"><span></span></div></td>'; }
+  if(s.status==='submitted'||s.status==='disqualified'){ const t=timeTakenMs(s); return '<td class="tdone">'+(t!=null?('⏱ '+fmtDur(t)):'–')+'</td>'; }
+  return '<td>–</td>';
+}
+function tickTimes(){
+  document.querySelectorAll('.tlive').forEach(function(el){
+    const st=+el.getAttribute('data-start'), tot=+el.getAttribute('data-total'); if(!st||!tot)return;
+    const rem=st+tot-Date.now(), cell=el.closest('.tcell'), bar=cell?cell.querySelector('.tbar>span'):null;
+    const pct=Math.max(0,Math.min(100,Math.round(rem/tot*100)));
+    el.textContent=rem<=0?'Temps écoulé':fmtClock(rem);
+    if(bar){ bar.style.width=pct+'%'; bar.style.background=pct>=50?'var(--green)':pct>=20?'var(--gold)':'var(--red)'; }
+    if(cell)cell.classList.toggle('over',rem<=0);
+  });
+}
+
 /* ---------- statistiques (pures) ---------- */
 function computeStats(list){
   const fin=list.filter(s=>s.status==='submitted'||s.status==='disqualified');
@@ -293,7 +324,9 @@ function computeStats(list){
   const sum=sc.reduce((a,b)=>a+b,0);
   const bins=[0,0,0,0];
   sc.forEach(x=>{const i=x>=15?3:x>=10?2:x>=5?1:0;bins[i]++;});
+  const durs=fin.map(timeTakenMs).filter(x=>x!=null&&x>0);
   return{total:list.length,
+    avgDur:durs.length?Math.round(durs.reduce((a,b)=>a+b,0)/durs.length):0, fastDur:durs.length?Math.min.apply(null,durs):0, slowDur:durs.length?Math.max.apply(null,durs):0, nbDur:durs.length,
     termine:list.filter(s=>s.status==='submitted').length,
     enCours:list.filter(s=>s.status==='in-progress').length,
     dq:list.filter(s=>s.status==='disqualified').length,
@@ -333,6 +366,7 @@ function openDashboard(){
   if(cloudReady()&&!rtDone){rtDone=true;
     cloudClient().channel('admin-rt').on('postgres_changes',{event:'*',schema:'public',table:'exam_sessions'},()=>load()).subscribe();}
   if(!window.__safety){window.__safety=setInterval(load,20000);} // filet de sécurité
+  if(!window.__ticker){window.__ticker=setInterval(tickTimes,1000);} // décompte du temps en direct
 }
 function logout(){
   try{sessionStorage.removeItem(AUTH_KEY);}catch(e){}
@@ -350,7 +384,8 @@ function render(){
   const st=computeStats(SESSIONS);
   document.getElementById('cards').innerHTML=
     card('Candidats',st.total)+card('Terminés',st.termine,'good')+card('En cours',st.enCours)+
-    card('Disqualifiés',st.dq,'bad')+card('Moyenne /20',st.nbNotes?st.moy:'-','gold')+card('Réussite ≥10',st.nbNotes?st.reussite+'%':'-','good');
+    card('Disqualifiés',st.dq,'bad')+card('Moyenne /20',st.nbNotes?st.moy:'-','gold')+card('Réussite ≥10',st.nbNotes?st.reussite+'%':'-','good')+
+    card('Temps moyen',st.nbDur?fmtDur(st.avgDur):'-');
 
   const maxBin=Math.max(1,...st.bins);
   const labs=['0–5','5–10','10–15','15–20'];
@@ -372,12 +407,14 @@ function render(){
     '</td><td><b style="letter-spacing:1px;color:var(--kaki-d)">'+esc(s.id)+'</b></td><td>'+esc(s.eglise)+
     '</td><td>'+esc(s.grade)+'</td><td>'+stLabel(s.status)+'</td><td>Épr. '+(s.level||1)+'</td><td>'+(s.exits||0)+'/3</td><td>'+
     (s.rallonge?('+'+s.rallonge+' min'):'-')+'</td><td><b>'+(s.score!=null?s.score:0)+'</b> / 20</td>'+
+    timeCell(s)+
     '<td class="noprint">'+(isValide(s)
       ? '<button class="btn btn-ghost" style="padding:5px 10px;font-size:12px" onclick="openC(\''+s.id+'\')">Voir</button>'
       : '<button class="btn btn-navy" style="padding:5px 10px;font-size:12px" onclick="openC(\''+s.id+'\')">Corriger</button>')
     +' <button class="btn btn-ghost" title="Profil statistique" style="padding:5px 8px;font-size:12px" onclick="gotoCand(\''+s.id+'\')">📈</button>'
     +' <button class="btn btn-ghost" style="padding:5px 9px;font-size:12px;color:var(--red);border-color:#e6b9b9" onclick="delC(\''+s.id+'\')">Supprimer</button></td></tr>'
-  ).join('') : '<tr><td colspan="11" class="mini" style="text-align:center;padding:20px">Aucun candidat.</td></tr>';
+  ).join('') : '<tr><td colspan="12" class="mini" style="text-align:center;padding:20px">Aucun candidat.</td></tr>';
+  tickTimes();
   refreshStatsView();
 }
 function card(lab,val,cls){return '<div class="card '+(cls||'')+'"><div class="lab">'+lab+'</div><div class="val">'+val+'</div></div>';}
