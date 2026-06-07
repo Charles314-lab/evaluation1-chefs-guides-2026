@@ -12,8 +12,9 @@
     --cream:#eaf1fb; --ink:#1d2433; --red:#c0392b; --paper:#ffffff;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);
+  body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
     background:linear-gradient(160deg,#0e2a5e,#15428a 55%,#0b2351);min-height:100vh}
+  ::selection{background:var(--gold-l);color:var(--navy-d)}
   .wrap{max-width:980px;margin:0 auto;padding:18px}
   .screen{display:none;animation:fade .4s ease}
   .screen.active{display:block}
@@ -31,10 +32,11 @@
   .btn{display:inline-block;border:none;border-radius:11px;padding:13px 22px;font-size:15px;
     font-weight:700;cursor:pointer;transition:transform .1s,filter .15s}
   .btn:hover{filter:brightness(1.06)} .btn:active{transform:translateY(1px)}
-  .btn-gold{background:linear-gradient(180deg,var(--gold-l),var(--gold));color:#5a3d00}
+  .btn-gold{background:linear-gradient(180deg,var(--gold-l),var(--gold));color:#3a2d05}
   .btn-navy{background:var(--navy);color:#fff}
   .btn-green{background:var(--green);color:#fff}
   .btn-ghost{background:transparent;border:1.5px solid #aebfdc;color:var(--navy)}
+  .btn:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
   .center{text-align:center}
   .logos{display:flex;gap:20px;justify-content:center;align-items:center;margin-bottom:10px;flex-wrap:wrap}
   .logos img{height:78px;width:auto;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.2))}
