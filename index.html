@@ -81,11 +81,29 @@
   .leaf.left .handle{right:9px} .leaf.right .handle{left:9px}
   .hall.open .leaf.left{transform:rotateY(-101deg)}
   .hall.open .leaf.right{transform:rotateY(101deg)}
+  /* Porte cliquable (item 7) */
+  .hall.clickable{cursor:pointer}
+  .hall.clickable:hover{box-shadow:0 0 0 4px rgba(242,183,5,.65)}
+  .hall.clickable:focus-visible{outline:none;box-shadow:0 0 0 4px var(--gold)}
+  .tap-hint{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:7;
+    background:var(--gold);color:#3a2d05;font-weight:800;font-size:14px;padding:9px 17px;border-radius:22px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35);white-space:nowrap;pointer-events:none;animation:tappulse 1.4s ease-in-out infinite}
+  @keyframes tappulse{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-7px)}}
+  .hall.open .tap-hint{opacity:0;transition:opacity .3s}
+  .tap-consigne{text-align:center;color:var(--kaki-d);font-weight:600;font-size:14px;margin:8px 0 4px}
 
-  .ex-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
-    background:var(--navy);color:#fff;border-radius:12px;padding:12px 16px;margin-bottom:14px}
-  .lvl{font-weight:800;color:var(--gold-l)}
-  .pill{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;font-size:13px}
+  .ex-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 14px;
+    background:linear-gradient(180deg,var(--navy),var(--navy-d));color:#fff;border-radius:12px;padding:13px 18px;margin-bottom:14px;
+    position:sticky;top:8px;z-index:15;box-shadow:0 8px 22px rgba(14,42,94,.28)}
+  .ex-org{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#cdd9f0;font-weight:700;margin-bottom:2px}
+  .lvl{font-weight:800;color:var(--gold-l);font-size:16px}
+  .ex-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .pill{background:rgba(255,255,255,.15);border-radius:20px;padding:5px 13px;font-size:13px}
+  .pill-time{background:var(--gold);color:#3a2d05;font-weight:800;font-size:15px}
+  .pill-time.urgent{background:var(--red);color:#fff;animation:pulseT .9s ease-in-out infinite}
+  @keyframes pulseT{0%,100%{opacity:1}50%{opacity:.55}}
+  .ex-progbar{flex-basis:100%;height:6px;background:rgba(255,255,255,.18);border-radius:6px;overflow:hidden}
+  .ex-progbar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-l),var(--gold));border-radius:6px;transition:width .3s}
   .q{background:#fff;border:1px solid #e2dcc6;border-radius:12px;padding:16px 18px;margin-bottom:14px}
   .q .qn{font-weight:700;color:var(--navy-d);margin-bottom:10px}
   .q .qmod{font-size:11px;color:#9a9276;font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
@@ -171,24 +189,23 @@
         <div class="box">Durée de l'épreuve<b>1 heure</b></div>
       </div>
 
-      <div class="hall" id="porte-hall">
+      <div class="hall clickable" id="porte-hall" role="button" tabindex="0" aria-label="Tapez la porte pour entrer dans la salle"
+           onclick="entrer()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();entrer();}">
         <div class="plaque">EXAMEN DES ASPIRANTS CHEFS GUIDES 2026<br>★ PERSÉVÉRANCE ★</div>
         <div class="doorway">
           <div class="inside"><div><div class="big">📖</div>La salle de composition vous attend</div></div>
           <div class="leaf left"><span class="pnl top"></span><span class="pnl bot"></span><span class="handle"></span></div>
           <div class="leaf right"><span class="pnl top"></span><span class="pnl bot"></span><span class="handle"></span></div>
         </div>
+        <div class="tap-hint" id="tap-hint">👆 Tapez la porte pour entrer</div>
       </div>
+      <p class="tap-consigne">Tapez la porte pour l'ouvrir lorsque vous êtes prêt.</p>
 
       <div class="rules">
         <b>⏱ Durée de l'épreuve : 1 heure.</b> Le temps est décompté et l'épreuve se termine automatiquement à la fin du temps imparti.<br><br>
         <b>La règle de la persévérance (le Kaki) :</b><br>
         Une fois entré dans la salle, vous y restez jusqu'à ce que vous ayez <b>terminé l'épreuve</b>. Ne quittez pas la page avant la fin.<br><br>
         Celui qui endure jusqu'au bout, celui-là sera récompensé. Entrez avec courage et donnez le meilleur de vous-même.
-      </div>
-
-      <div class="center">
-        <button class="btn btn-green" onclick="entrer()">Entrer dans la salle</button>
       </div>
     </div>
   </section>
@@ -197,11 +214,16 @@
   <section id="screen-examen" class="screen">
     <div class="banner noprint">Ne quittez pas cette page tant que vous n'avez pas terminé l'épreuve.</div>
     <div class="ex-head">
-      <div><span class="lvl" id="e-niveau">Épreuve 1</span> <span class="mini" id="e-niveau-desc"></span></div>
-      <div class="row">
-        <span class="pill">⏱ <span id="e-timer">00:00</span></span>
+      <div class="ex-id">
+        <div class="ex-org">Examen des Aspirants Chefs Guides · MJA Mali</div>
+        <div><span class="lvl" id="e-niveau">Épreuve 1</span> <span class="mini" id="e-niveau-desc" style="color:#cdd9f0"></span></div>
+      </div>
+      <div class="ex-meta">
+        <span class="pill pill-time" id="e-timepill">⏱ <b id="e-timer">00:00</b></span>
+        <span class="pill">✓ Répondu : <b id="e-progress">0 / 0</b></span>
         <span class="pill">Sorties : <span id="e-exits">0</span>/3</span>
       </div>
+      <div class="ex-progbar"><span id="e-progbar"></span></div>
     </div>
     <div id="examen-questions"></div>
     <div class="center" style="margin:10px 0 30px">
@@ -403,6 +425,7 @@ function connexion(){
 /* ---------- entrer dans la salle ---------- */
 function entrer(){
   const hall=document.getElementById('porte-hall');
+  if(hall.classList.contains('open')) return; // évite un double déclenchement (clic/clavier répétés)
   hall.classList.add('open');                 // les portes s'ouvrent lentement en pivotant
   setTimeout(()=>{ show('screen-examen'); startExam(); },2200);
 }
@@ -427,7 +450,7 @@ function startTimer(min){
     }
     const el=document.getElementById('e-timer');
     el.textContent=pad(Math.floor(r/60))+':'+pad(r%60);
-    el.style.color = r<=300 ? '#ffd27a' : '';         // alerte visuelle dans les 5 dernières minutes
+    const tp=document.getElementById('e-timepill'); if(tp) tp.classList.toggle('urgent', r<=300); // alerte 5 dernières min
   },500);
 }
 function offrirRallonge(){
@@ -465,8 +488,16 @@ function renderQuestions(){
     }
     div.innerHTML=html;box.appendChild(div);
   });
+  updateProgress();
 }
-function ans(qid,val){S.answers[S.level][qid]=val;upsert(S);}
+function ans(qid,val){S.answers[S.level][qid]=val;upsert(S);updateProgress();}
+function updateProgress(){
+  const lv=S.level, items=(S.selected&&S.selected[lv])||[], a=(S.answers&&S.answers[lv])||{};
+  let done=0;
+  items.forEach(it=>{ const v=a[it.id]; if(it.opts){ if(v!=null&&v!=='') done++; } else if(v&&String(v).trim()) done++; });
+  const p=document.getElementById('e-progress'); if(p) p.textContent=done+' / '+items.length;
+  const bar=document.getElementById('e-progbar'); if(bar) bar.style.width=(items.length?Math.round(done/items.length*100):0)+'%';
+}
 
 /* ---------- détection des sorties (mécanisme volontairement non expliqué au candidat) ---------- */
 document.addEventListener('visibilitychange',()=>{ if(document.hidden) handleExit(); });

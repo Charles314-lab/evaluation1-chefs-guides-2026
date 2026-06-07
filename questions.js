@@ -48,6 +48,9 @@ const POOL = {
     {id:"q-m3-3",mod:"Logos JA",q:"La couleur or (jaune) représente :",opts:["La richesse","L'excellence","Le soleil","La joie"],correct:1},
     {id:"q-m3-4",mod:"Logos JA",q:"Le logo des Chefs Guides a la forme d'un :",opts:["Cercle","Triangle","Octogone","Carré"],correct:2},
     {id:"q-m3-5",mod:"Logos JA",q:"Les trois flammes du logo Chef Guide rappellent :",opts:["La Trinité","Le message des trois anges","Les trois couleurs","Les trois classes"],correct:1},
+    {id:"q-m3-6",mod:"Logos JA",q:"Combien d'étoiles entourent le globe sur le logo des Chefs Guides ?",opts:["Quatre","Cinq","Six","Huit"],correct:2},
+    {id:"q-m3-7",mod:"Logos JA",q:"Que représentent les étoiles du logo des Chefs Guides ?",opts:["Les fruits de l'Esprit","Les classes progressives","Les continents du monde","Les douze apôtres"],correct:1},
+    {id:"q-m3-8",mod:"Logos JA",q:"Au centre du logo des Chefs Guides figure :",opts:["Une croix","Un globe (le monde)","Une flamme","Un livre ouvert"],correct:1},
     // Module 4 :Fondements JA
     {id:"q-m4-1",mod:"Fondements JA",q:"Combien de classes progressives compte le Club des Explorateurs ?",opts:["4","5","6","7"],correct:2},
     {id:"q-m4-2",mod:"Fondements JA",q:"Combien y a-t-il d'idéaux de la Jeunesse Adventiste ?",opts:["3","4","5","6"],correct:2},
@@ -92,6 +95,7 @@ const POOL = {
     {id:"co-m2-1",mod:"Philosophie Aventuriers",q:"Quels sont les trois piliers qui s'unissent dans la philosophie des Aventuriers ?"},
     {id:"co-m3-1",mod:"Logos JA",q:"Donnez la signification des couleurs bleu, rouge, blanc et or."},
     {id:"co-m3-2",mod:"Logos JA",q:"Que représentent l'octogone et le globe dans le logo des Chefs Guides ?"},
+    {id:"co-m3-3",mod:"Logos JA",q:"Combien d'étoiles compte le logo des Chefs Guides et que symbolisent-elles ?"},
     {id:"co-m4-1",mod:"Fondements JA",q:"Citez les 5 idéaux de la Jeunesse Adventiste."},
     {id:"co-m4-2",mod:"Fondements JA",q:"Qu'est-ce qu'un « membre actif » du club ?"},
     {id:"co-m5-1",mod:"Origine des classes",q:"Citez les 6 classes progressives avec leur couleur."},
