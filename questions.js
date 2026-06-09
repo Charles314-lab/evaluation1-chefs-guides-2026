@@ -142,3 +142,28 @@ const POOL = {
     {id:"ca-no-1",mod:"Nœuds",q:"Vous installez un campement. Décrivez deux nœuds que vous utiliseriez, leur usage précis et où les employer."},
   ],
 };
+
+/* ============================================================
+   RÉFÉRENCES (sources officielles GC Youth Ministries) — éditables ici.
+   refFor(q) = référence spécifique de la question (REFS_Q) sinon celle du module (REFS).
+   Remplace par les titres/sections exacts de ton manuel MJA Mali si besoin.
+   ============================================================ */
+const REFS = {
+  "Philosophie Explorateurs":"Manuel d'administration des Explorateurs (GC) + classe Explorateur",
+  "Philosophie Aventuriers":"Manuel d'administration des Aventuriers (GC)",
+  "Logos JA":"AY Honors – Drapeaux (GC) + Manuel d'admin. (emblème mondial)",
+  "Fondements JA":"Manuel d'administration des Explorateurs (GC) – Idéaux JA (But, Devise, Vœu, Loi)",
+  "Origine des classes":"Classes progressives JA (GC) – d'Ami à Guide",
+  "Petits groupes":"Manuel d'administration des Aventuriers (GC) – petits groupes",
+  "Cérémonies":"Manuel d'administration des Explorateurs (GC) – Cérémonies",
+  "Investiture":"Manuel d'administration des Explorateurs (GC) – Investiture",
+  "Incorporation":"Manuel d'administration des Explorateurs (GC) – Incorporation (Induction)",
+  "Tenue JA":"Spécifications de l'uniforme Explorateur (GC)",
+  "Nœuds":"AY Honors – Nœuds (GC)"
+};
+const REFS_Q = {
+  "q-m1-2":"2 Corinthiens 5:14 (devise JA « L'amour du Christ nous presse »)",
+  "q-m2-2":"Proverbes 22:6 (verset fondateur des Aventuriers)",
+  "q-m2-5":"Proverbes 22:6"
+};
+function refFor(q){ return (typeof REFS_Q!=='undefined'&&REFS_Q[q.id]) || (typeof REFS!=='undefined'&&REFS[q.mod]) || ''; }

@@ -256,6 +256,8 @@
             <button class="btn btn-green" onclick="exportCSV()">⤓ Résultats (Excel · CSV)</button>
             <button class="btn btn-green" onclick="exportStatsCSV()">⤓ Statistiques (Excel · CSV)</button>
             <button class="btn btn-navy" onclick="exportStatsPDF()">⤓ Rapport statistiques (PDF)</button>
+            <button class="btn btn-navy" onclick="exportQuestionnaire()">⤓ Questionnaire complet (PDF)</button>
+            <button class="btn btn-navy" onclick="exportCorrige()">⤓ Corrigé avec références (PDF)</button>
           </div>
         </div>
       </section>
@@ -871,6 +873,57 @@ function exportStatsPDF(){
     });
   },300);
 }
+/* ---------- PDF questionnaire / corrigé (toutes les questions, par module) ---------- */
+function pdfFromHTML(html,filename){
+  const wrap=document.createElement('div');
+  wrap.style.position='absolute'; wrap.style.left='-10000px'; wrap.style.top='0';
+  wrap.innerHTML=html; document.body.appendChild(wrap);
+  const el=wrap.querySelector('#pdfsheet');
+  const cleanup=function(){ if(wrap.parentNode)document.body.removeChild(wrap); };
+  setTimeout(function(){
+    generatePDF(el,filename,function(ok){
+      if(!ok){ const w=window.open('','_blank'); if(w){ w.document.write('<!DOCTYPE html><html><head><meta charset="utf-8"></head><body style="margin:0">'+html+'<scr'+'ipt>setTimeout(function(){window.print()},400)</scr'+'ipt></body></html>'); w.document.close(); } }
+      cleanup();
+    });
+  },300);
+}
+function buildQuestionPDF(corrige){
+  const byMod={}; ['qcm','court','cas'].forEach(t=>POOL[t].forEach(q=>{ (byMod[q.mod]=byMod[q.mod]||[]).push({q:q,t:t}); }));
+  let dnow=''; try{dnow=new Date().toLocaleDateString('fr-FR');}catch(e){}
+  let nQ=0; Object.keys(byMod).forEach(m=>nQ+=byMod[m].length);
+  let body='';
+  Object.keys(byMod).forEach(function(mod){
+    body+='<h2 class="sec">'+esc(mod)+' <span style="font-weight:normal;font-size:11px;color:#888">('+byMod[mod].length+')</span></h2>';
+    byMod[mod].forEach(function(o){ const q=o.q;
+      body+='<div class="qq"><div class="qn">'+esc(q.q)+'</div>';
+      if(q.opts){ body+='<ol class="opts" type="A">'+q.opts.map(function(op,oi){ const good=corrige&&oi===q.correct; return '<li'+(good?' class="good"':'')+'>'+esc(op)+(good?' ✓':'')+'</li>'; }).join('')+'</ol>'; }
+      else{ const w=(o.t==='cas')?POINTS.cas:POINTS.court; body+='<div class="redac">Réponse rédigée — '+w+' pts'+(corrige?' (correction manuelle par le chef guide)':'')+(o.t==='cas'?' · cas pratique':' · réponse courte')+'</div>'; }
+      if(corrige){ const r=refFor(q); body+='<div class="ref">'+(r?esc(r):'(référence à compléter)')+'</div>'; }
+      body+='</div>';
+    });
+  });
+  return '<style>'
+    +'#pdfsheet{font-family:Georgia,"Times New Roman",serif;color:#1d2433;font-size:13px;line-height:1.4;width:760px;background:#fff;padding:4px}'
+    +'#pdfsheet *{box-sizing:border-box}'
+    +'#pdfsheet .head{display:flex;align-items:center;gap:14px;border-bottom:3px solid #f2b705;padding-bottom:10px;margin-bottom:8px}#pdfsheet .head img{height:58px;width:auto}'
+    +'#pdfsheet .head .t{flex:1;text-align:center}#pdfsheet .head .org{font-size:11px;letter-spacing:1px;color:#173f86;font-weight:bold;text-transform:uppercase}'
+    +'#pdfsheet .head .ti{font-size:18px;color:#173f86;font-weight:bold;margin:2px 0}#pdfsheet .head .sub2{font-size:13px;color:#1f8a4c;font-weight:bold;letter-spacing:3px}'
+    +'#pdfsheet h2.sec{font-size:14px;color:#0e2a5e;border-left:5px solid #f2b705;padding-left:9px;margin:15px 0 8px}'
+    +'#pdfsheet .qq{border:1px solid #dde3ee;border-radius:9px;padding:8px 12px;margin-bottom:7px}#pdfsheet .qn{font-weight:bold;color:#0e2a5e}'
+    +'#pdfsheet ol.opts{margin:5px 0 0 22px;padding:0}#pdfsheet ol.opts li{margin:2px 0}#pdfsheet ol.opts li.good{color:#1f8a4c;font-weight:bold}'
+    +'#pdfsheet .redac{margin-top:4px;color:#8a5a12;font-style:italic;font-size:12px}'
+    +'#pdfsheet .ref{margin-top:5px;font-size:11px;color:#444;background:#f6f8fc;border-left:3px solid #1f8a4c;padding:3px 8px;border-radius:0 5px 5px 0}#pdfsheet .ref::before{content:"Référence : ";font-weight:bold;color:#13522f}'
+    +'#pdfsheet .foot{margin-top:18px;border-top:1px solid #ccc;padding-top:7px;text-align:center;font-size:10px;color:#888}'
+    +'</style><div id="pdfsheet">'
+    +'<div class="head"><img src="logo-cg.jpg" onerror="this.style.display=\'none\'"><div class="t"><div class="org">Ministère de la Jeunesse Adventiste · Mali</div><div class="ti">Examen des Aspirants Chefs Guides 2026</div><div class="sub2">'+(corrige?'CORRIGÉ':'QUESTIONNAIRE')+'</div></div><img src="logo-ja.jpg" onerror="this.style.display=\'none\'"></div>'
+    +'<div style="text-align:right;font-size:10px;color:#888;margin-bottom:6px">'+nQ+' questions · '+Object.keys(byMod).length+' modules'+(dnow?' · édité le '+dnow:'')+'</div>'
+    +(corrige?'<div style="font-size:11px;color:#555;margin-bottom:8px">QCM : la bonne réponse est en <b style="color:#1f8a4c">vert ✓</b>. Réponses rédigées : barème indiqué, correction manuelle.</div>':'')
+    +body
+    +'<div class="foot">MJA Mali · Programme Chefs Guides 2026 · « L\'amour du Christ nous presse »</div>'
+    +'</div>';
+}
+function exportQuestionnaire(){ pdfFromHTML(buildQuestionPDF(false),'Questionnaire_complet_chefs_guides_2026.pdf'); }
+function exportCorrige(){ pdfFromHTML(buildQuestionPDF(true),'Corrige_avec_references_chefs_guides_2026.pdf'); }
 
 /* reste connecté après un rafraîchissement (session du navigateur) */
 try{ if(sessionStorage.getItem(AUTH_KEY)==='1') openDashboard(); }catch(e){}
