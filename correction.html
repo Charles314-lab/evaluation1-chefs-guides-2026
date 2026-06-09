@@ -83,8 +83,18 @@
     </div>
   </div>
   <div class="wrap">
+    <div id="done-banner" class="hidden" style="background:linear-gradient(180deg,#eafaf0,#d9f3e3);border:1px solid #b7e3c6;border-radius:13px;padding:16px 18px;margin-bottom:16px;text-align:center">
+      <div style="font-size:34px">🎉</div>
+      <div style="font-weight:800;color:var(--kaki-d);font-size:18px;margin-top:4px">Vous avez tout corrigé — merci !</div>
+      <div class="mini" id="done-recap" style="margin-top:4px"></div>
+    </div>
     <div class="panel">
-      <p class="mini" style="margin-bottom:10px">Voici <b>uniquement les copies qui vous sont assignées</b>. Cliquez « Corriger » pour noter les réponses rédigées ; les QCM sont corrigés automatiquement. Validez chaque note quand vous avez terminé.</p>
+      <p class="mini" style="margin-bottom:10px">Voici <b>uniquement les copies qui vous sont assignées</b>. Notez les réponses rédigées (les QCM sont corrigés automatiquement), puis validez chaque copie.</p>
+      <div class="tabs" id="tabs" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+        <button class="btn btn-navy" data-f="todo" onclick="setFilter('todo')">À corriger</button>
+        <button class="btn btn-ghost" data-f="done" onclick="setFilter('done')">Validées</button>
+        <button class="btn btn-ghost" data-f="all" onclick="setFilter('all')">Toutes</button>
+      </div>
       <div style="overflow:auto">
         <table>
           <thead><tr><th>#</th><th>Nom</th><th>Identifiant</th><th>Église</th><th>Grade</th><th>Statut</th><th>Note /20</th><th>Action</th></tr></thead>
@@ -103,7 +113,7 @@
 <script src="questions.js"></script>
 <script>
 const LS_KEY="examCG2026_sessions", AUTH_KEY="cg_corr_code";
-let SESSIONS=[], current=null, MYID='';
+let SESSIONS=[], current=null, MYID='', FILTER='todo';
 let _sb=null;
 function cloudReady(){return !!(typeof SUPABASE_URL!=='undefined'&&typeof SUPABASE_ANON!=='undefined'&&SUPABASE_ANON&&SUPABASE_ANON.indexOf('COLLE_TA_CLE')!==0&&window.supabase);}
 function cloudClient(){if(!_sb)_sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);return _sb;}
@@ -154,47 +164,74 @@ function logout(){
   document.getElementById('gate').classList.remove('hidden');
   document.getElementById('code').value=''; document.getElementById('gate-err').textContent='';
 }
+function pendingRedac(s){ let n=0; for(let lv=1;lv<=(s.level||1);lv++){((s.selected&&s.selected[lv])||[]).forEach(it=>{ if(!it.opts){ const v=(s.manual||{})[lv+'_'+it.id]; if(v==null||v==='') n++; } });} return n; }
+function filteredList(){ const l=SESSIONS.slice().sort((a,b)=>(isValide(a)?1:0)-(isValide(b)?1:0)); if(FILTER==='todo')return l.filter(s=>!isValide(s)); if(FILTER==='done')return l.filter(s=>isValide(s)); return l; }
+function setFilter(f){ FILTER=f; document.querySelectorAll('#tabs button').forEach(b=>b.className='btn '+(b.getAttribute('data-f')===f?'btn-navy':'btn-ghost')); render(); }
 function render(){
-  const total=SESSIONS.length, done=SESSIONS.filter(isValide).length;
+  const total=SESSIONS.length, done=SESSIONS.filter(isValide).length, todo=total-done;
   const mc=document.getElementById('me-count'); if(mc)mc.textContent=done+' / '+total+' validées';
-  const list=SESSIONS.slice().sort((a,b)=>(isValide(a)?1:0)-(isValide(b)?1:0));
-  document.getElementById('tbody').innerHTML = list.length? list.map((s,i)=>
-    '<tr><td>'+(i+1)+'</td><td>'+esc(s.nom)+(isValide(s)?' <span class="valide">✓</span>':'')+'</td>'+
+  const db=document.getElementById('done-banner'), allDone=(total>0&&done===total);
+  if(db){ db.classList.toggle('hidden',!allDone); const dr=document.getElementById('done-recap'); if(dr&&allDone)dr.textContent=total+' copie(s) validée(s). Vous pouvez fermer cette page.'; }
+  const tb=document.querySelectorAll('#tabs button'); if(tb&&tb.length>=3){ tb[0].textContent='À corriger ('+todo+')'; tb[1].textContent='Validées ('+done+')'; tb[2].textContent='Toutes ('+total+')'; }
+  const list=filteredList();
+  document.getElementById('tbody').innerHTML = list.length? list.map((s,i)=>{ const pend=pendingRedac(s);
+    return '<tr><td>'+(i+1)+'</td><td>'+esc(s.nom)+(isValide(s)?' <span class="valide">✓</span>':'')+'</td>'+
     '<td><b style="letter-spacing:1px;color:var(--kaki-d)">'+esc(s.id)+'</b></td><td>'+esc(s.eglise)+'</td><td>'+esc(s.grade)+'</td>'+
-    '<td>'+stLabel(s.status)+'</td><td><b>'+(s.score!=null?s.score:0)+'</b> / 20</td>'+
-    '<td><button class="btn '+(isValide(s)?'btn-ghost':'btn-navy')+'" style="padding:5px 12px;font-size:12.5px" onclick="openC(\''+s.id+'\')">'+(isValide(s)?'Voir':'Corriger')+'</button></td></tr>'
-  ).join('') : '<tr><td colspan="8" class="mini" style="text-align:center;padding:20px">Aucune copie assignée.</td></tr>';
+    '<td>'+(isValide(s)?'<span class="st st-ok">Validée</span>':(pend?'<span class="st" style="background:#fdeccf;color:#8a5a12">'+pend+' à noter</span>':'<span class="st st-go">À valider</span>'))+'</td>'+
+    '<td><b>'+(s.score!=null?s.score:0)+'</b> / 20</td>'+
+    '<td><button class="btn '+(isValide(s)?'btn-ghost':'btn-navy')+'" style="padding:5px 12px;font-size:12.5px" onclick="openC(\''+s.id+'\')">'+(isValide(s)?'Voir':'Corriger')+'</button></td></tr>';
+  }).join('') : '<tr><td colspan="8" class="mini" style="text-align:center;padding:20px">'+(FILTER==='todo'?'Tout est corrigé 🎉':'Aucune copie.')+'</td></tr>';
 }
 function openC(id){
   current=SESSIONS.find(x=>x.id===id); if(!current)return;
   const s=current; s.manual=s.manual||{};
-  let h='<div class="row" style="display:flex;gap:10px;align-items:center"><h2 style="color:var(--navy)">'+esc(s.nom)+'</h2>'+
-    '<div style="margin-left:auto"><button class="btn btn-ghost" onclick="closeC()">Fermer</button></div></div>'+
-    '<p class="mini">Identifiant : <b style="color:var(--kaki-d);letter-spacing:1px">'+esc(s.id)+'</b> · '+esc(s.eglise)+' · Grade '+esc(s.grade)+' · Épreuve '+(s.level||1)+' · Sorties '+(s.exits||0)+'/3'+(s.rallonge?' · Rallonge +'+s.rallonge+' min':'')+' · '+stLabel(s.status)+'</p><hr style="margin:12px 0;border:none;border-top:1px solid var(--line)">';
+  const nav=filteredList(), pos=nav.findIndex(x=>x.id===id);
+  let h='<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h2 style="color:var(--navy)">'+esc(s.nom)+'</h2>'+
+    '<span class="mini">Copie '+(pos>=0?pos+1:'?')+' / '+nav.length+'</span>'+
+    '<div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">'+
+      '<button class="btn btn-ghost" '+(pos<=0?'disabled style="opacity:.45"':'')+' onclick="navCopy(-1)">← Préc.</button>'+
+      '<button class="btn btn-ghost" '+(pos<0||pos>=nav.length-1?'disabled style="opacity:.45"':'')+' onclick="navCopy(1)">Suiv. →</button>'+
+      '<button class="btn btn-ghost" onclick="closeC()">Fermer</button></div></div>'+
+    '<p class="mini">Identifiant : <b style="color:var(--kaki-d);letter-spacing:1px">'+esc(s.id)+'</b> · '+esc(s.eglise)+' · Grade '+esc(s.grade)+' · Épreuve '+(s.level||1)+' · Sorties '+(s.exits||0)+'/3'+(s.rallonge?' · Rallonge +'+s.rallonge+' min':'')+'</p><hr style="margin:12px 0;border:none;border-top:1px solid var(--line)">';
   for(let lv=1;lv<=(s.level||1);lv++){
     h+='<h3 style="color:var(--kaki-d);font-size:15px;margin:6px 0">'+(NIVEAU[lv]?NIVEAU[lv].titre:'Épreuve '+lv)+'</h3>';
-    ((s.selected&&s.selected[lv])||[]).forEach((it,idx)=>{
+    ((s.selected&&s.selected[lv])||[]).forEach((it,i2)=>{
       const a=s.answers&&s.answers[lv]?s.answers[lv][it.id]:undefined;
-      h+='<div class="q">'+(it.mod?'<div class="qmod">'+esc(it.mod)+'</div>':'')+'<div class="qn">'+(idx+1)+'. '+esc(it.q)+'</div>';
+      h+='<div class="q">'+(it.mod?'<div class="qmod">'+esc(it.mod)+'</div>':'')+'<div class="qn">'+(i2+1)+'. '+esc(it.q)+'</div>';
       if(it.opts){const ok=(a==it.correct);
         h+='<div>Réponse : <span class="'+(ok?'ok':'ko')+'">'+(a!=null?esc(it.opts[a]):'(vide)')+'</span> '+(ok?'✓ +'+POINTS.qcm:'✗ attendu : '+esc(it.opts[it.correct]))+'</div>';
-      }else{const key=lv+'_'+it.id,w=qWeight(it);
+      }else{const key=lv+'_'+it.id,w=qWeight(it),ung=(s.manual[key]==null||s.manual[key]==='');
         h+='<div class="ans">'+(a?esc(a):'<i>(pas de réponse)</i>')+'</div>'+
           '<div style="display:flex;gap:8px;align-items:center"><label style="font-size:13px;font-weight:600">Points (0 à '+w+') :</label>'+
-          '<input type="number" min="0" max="'+w+'" step="1" style="width:80px" value="'+(s.manual[key]!=null?s.manual[key]:'')+'" oninput="setPt(\''+key+'\',this.value)"> <span class="mini">'+(w===POINTS.cas?'cas pratique':'réponse courte')+' · max '+w+' pts</span></div>';
+          '<input type="number" min="0" max="'+w+'" step="1" style="width:80px'+(ung?';border-color:var(--red);background:#fff6f6':'')+'" value="'+(s.manual[key]!=null?s.manual[key]:'')+'" oninput="setPt(\''+key+'\',this.value)"> <span class="mini">'+(w===POINTS.cas?'cas pratique':'réponse courte')+' · max '+w+' pts'+(ung?' · <b style="color:var(--red)">à noter</b>':'')+'</span></div>';
       }
       h+='</div>';
     });
   }
-  const g=gradeFull(s);
-  h+='<div class="note"><b>Note finale : <span id="nf">'+g.sur20+'</span> / 20</b> &nbsp;·&nbsp; QCM auto : '+g.autoOk+'/'+g.autoN+
-     ' <span style="margin-left:14px"><button class="btn '+(isValide(s)?'btn-green':'btn-navy')+'" id="vbtn" onclick="toggleValide()">'+(isValide(s)?'✓ Note validée':'Valider la note')+'</button></span></div>';
+  const pend=pendingRedac(s), g=gradeFull(s);
+  h+='<div class="note"><b>Note : <span id="nf">'+g.sur20+'</span> / 20</b> · QCM auto : '+g.autoOk+'/'+g.autoN+
+     (pend?' · <span style="color:var(--red);font-weight:700">'+pend+' rédaction(s) à noter</span>':'')+
+     '<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn '+(isValide(s)?'btn-green':(pend?'btn-ghost':'btn-navy'))+'" id="vbtn" onclick="toggleValide()"'+(pend&&!isValide(s)?' title="Notez d\'abord toutes les rédactions"':'')+'>'+(isValide(s)?'✓ Validée (cliquer pour dévalider)':'Valider la note')+'</button>'+
+     (pos>=0&&pos<nav.length-1?'<button class="btn btn-navy" onclick="validateNext()">Valider et suivante →</button>':'')+'</div></div>';
   document.getElementById('sheet').innerHTML=h;
   document.getElementById('modal').classList.add('show');
 }
-function setPt(key,val){ current.manual[key]=val; const g=gradeFull(current); current.score=g.sur20; document.getElementById('nf').textContent=g.sur20; saveCorrection(current); render(); }
-function toggleValide(){ current.manual=current.manual||{}; current.manual.__valide=!isValide(current); saveCorrection(current);
-  const b=document.getElementById('vbtn'); if(b){b.className='btn '+(isValide(current)?'btn-green':'btn-navy'); b.textContent=isValide(current)?'✓ Note validée':'Valider la note';} render(); }
+function navCopy(dir){ if(!current)return; const nav=filteredList(), pos=nav.findIndex(x=>x.id===current.id), ni=pos+dir; if(ni>=0&&ni<nav.length) openC(nav[ni].id); }
+function validateNext(){ const s=current; if(!s)return;
+  if(pendingRedac(s)>0){ alert('Notez d\'abord toutes les rédactions ('+pendingRedac(s)+' restante(s)).'); return; }
+  if(!isValide(s)){ s.manual=s.manual||{}; s.manual.__valide=true; saveCorrection(s); }
+  render();
+  const next=SESSIONS.filter(x=>!isValide(x));
+  if(next.length){ openC(next[0].id); } else { closeC(); }
+}
+function setPt(key,val){ current.manual[key]=val; const g=gradeFull(current); current.score=g.sur20; const nf=document.getElementById('nf'); if(nf)nf.textContent=g.sur20; saveCorrection(current); render();
+  const b=document.getElementById('vbtn'); if(b&&!isValide(current)){ b.className='btn '+(pendingRedac(current)?'btn-ghost':'btn-navy'); } }
+function toggleValide(){ current.manual=current.manual||{};
+  if(!isValide(current)){ const pend=pendingRedac(current); if(pend>0){ alert('Notez d\'abord toutes les rédactions ('+pend+' restante(s)).'); return; } current.manual.__valide=true; }
+  else current.manual.__valide=false;
+  saveCorrection(current);
+  const b=document.getElementById('vbtn'); if(b){ b.className='btn '+(isValide(current)?'btn-green':'btn-navy'); b.textContent=isValide(current)?'✓ Validée (cliquer pour dévalider)':'Valider la note'; }
+  render(); }
 function closeC(){ document.getElementById('modal').classList.remove('show'); current=null; }
 
 /* reste connecté après un rafraîchissement (session du navigateur) */
