@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Correction · Examen Chefs Guides 2026</title>
+<style>
+  :root{--navy:#173f86;--navy-d:#0e2a5e;--kaki:#1f8a4c;--kaki-d:#13522f;--gold:#f2b705;--gold-l:#ffd24a;--green:#1f8a4c;--red:#c0392b;--ink:#1d2433;--line:#dbe4f3;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);background:#eef2f9;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+  ::selection{background:var(--gold-l);color:var(--navy-d)}
+  .hidden{display:none!important}
+  .btn{border:none;border-radius:10px;padding:9px 16px;font-size:13.5px;font-weight:700;cursor:pointer;transition:filter .15s,transform .1s}
+  .btn:hover{filter:brightness(1.08)} .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2.5px solid var(--gold);outline-offset:2px}
+  .btn-navy{background:var(--navy);color:#fff}.btn-green{background:var(--green);color:#fff}
+  .btn-ghost{background:#fff;border:1.5px solid #aebfdc;color:var(--navy)}
+  input,select,textarea{padding:9px 11px;border:1.5px solid #c4d0e6;border-radius:9px;font-size:14px;font-family:inherit;background:#fff}
+  input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(23,63,134,.13)}
+  /* ---- login ---- */
+  #gate{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:22px;overflow:auto;
+    background:radial-gradient(1100px 560px at 50% -8%,#2152a6 0%,var(--navy) 46%,var(--navy-d) 100%)}
+  #gate::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--kaki),var(--gold),var(--navy))}
+  .login-card{position:relative;width:100%;max-width:420px;background:#fff;border-radius:20px;padding:34px 32px 26px;text-align:center;box-shadow:0 28px 70px rgba(0,0,0,.42);border-top:6px solid var(--gold)}
+  .login-card .org{font-size:11px;letter-spacing:1.6px;text-transform:uppercase;color:var(--navy);font-weight:800}
+  .login-card h2{color:var(--navy-d);font-size:23px;margin:9px 0 2px}
+  .login-card .sub{color:#7a869c;font-size:13px;margin-bottom:20px}
+  #gate label{display:block;text-align:left;font-size:12px;font-weight:700;color:var(--navy);margin:0 0 5px}
+  #gate input{width:100%;text-align:center;letter-spacing:3px;font-weight:700;font-size:17px;text-transform:uppercase}
+  .btn-login{width:100%;margin-top:14px;padding:13px;font-size:15.5px;font-weight:800;cursor:pointer;border:none;border-radius:12px;color:#3a2d05;background:linear-gradient(180deg,var(--gold-l),var(--gold));box-shadow:0 9px 22px rgba(242,183,5,.4)}
+  .btn-login:hover{filter:brightness(1.06)}
+  .login-err{color:var(--red);font-size:13px;font-weight:600;margin-top:12px;min-height:18px}
+  /* ---- app ---- */
+  .top{background:linear-gradient(180deg,var(--navy),var(--navy-d));color:#fff;padding:15px 22px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+  .top h1{font-size:18px}
+  .top .r{margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .badge{border-radius:20px;padding:5px 12px;font-size:12.5px;font-weight:700;background:#0a7d4f;color:#fff}
+  .wrap{max-width:1080px;margin:0 auto;padding:18px}
+  .panel{background:#fff;border-radius:13px;padding:16px;box-shadow:0 4px 14px rgba(0,0,0,.07);border:1px solid var(--line)}
+  table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:left}
+  th{background:#e8eefa;color:var(--navy-d)}
+  tr:hover td{background:#f3f7fd}
+  .st{font-weight:700;font-size:12px;border-radius:14px;padding:2px 9px;display:inline-block}
+  .st-ok{background:#e3f3e4;color:var(--green)}.st-dq{background:#f7e0e0;color:var(--red)}.st-go{background:#eef2f8;color:var(--navy)}
+  .valide{color:var(--green);font-weight:800}
+  .mini{font-size:12px;color:#777}
+  /* ---- modal correction ---- */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-start;justify-content:center;padding:24px;z-index:40;overflow:auto}
+  .modal.show{display:flex}
+  .sheet{background:#fff;border-radius:14px;max-width:780px;width:100%;padding:22px}
+  .q{border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-bottom:11px}
+  .q .qmod{font-size:11px;color:#7a86a0;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+  .q .qn{font-weight:700;color:var(--navy-d);margin:3px 0 8px}
+  .ans{background:#f5f1e0;border-radius:8px;padding:8px 10px;margin:5px 0;white-space:pre-wrap}
+  .ok{color:var(--green);font-weight:700}.ko{color:var(--red);font-weight:700}
+  .note{background:#eef2f8;border-radius:10px;padding:12px 14px;font-size:15px;margin-top:10px}
+</style>
+</head>
+<body>
+
+<!-- CONNEXION CORRECTEUR -->
+<div id="gate">
+  <div class="login-card">
+    <div class="org">Ministère de la Jeunesse Adventiste · Mali</div>
+    <h2>Espace Correction</h2>
+    <div class="sub">Examen des Aspirants Chefs Guides 2026 · réservé aux chefs guides correcteurs</div>
+    <label for="code">Votre identifiant de correcteur</label>
+    <input id="code" placeholder="Ex : CG1A2B" autocomplete="off" autofocus onkeydown="if(event.key==='Enter')login()">
+    <button class="btn-login" onclick="login()">Accéder à mes copies</button>
+    <p id="gate-err" class="login-err"></p>
+  </div>
+</div>
+
+<!-- APP CORRECTEUR -->
+<div id="app" class="hidden">
+  <div class="top">
+    <h1>Correction · <span id="me-name">…</span></h1>
+    <span class="badge" id="me-count">0 / 0 validées</span>
+    <div class="r">
+      <button class="btn btn-ghost" onclick="loadMine(false)">↻ Actualiser</button>
+      <button class="btn btn-ghost" onclick="logout()">⎋ Quitter</button>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="panel">
+      <p class="mini" style="margin-bottom:10px">Voici <b>uniquement les copies qui vous sont assignées</b>. Cliquez « Corriger » pour noter les réponses rédigées ; les QCM sont corrigés automatiquement. Validez chaque note quand vous avez terminé.</p>
+      <div style="overflow:auto">
+        <table>
+          <thead><tr><th>#</th><th>Nom</th><th>Identifiant</th><th>Église</th><th>Grade</th><th>Statut</th><th>Note /20</th><th>Action</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL correction -->
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="questions.js"></script>
+<script>
+const LS_KEY="examCG2026_sessions", AUTH_KEY="cg_corr_code";
+let SESSIONS=[], current=null, MYID='';
+let _sb=null;
+function cloudReady(){return !!(typeof SUPABASE_URL!=='undefined'&&typeof SUPABASE_ANON!=='undefined'&&SUPABASE_ANON&&SUPABASE_ANON.indexOf('COLLE_TA_CLE')!==0&&window.supabase);}
+function cloudClient(){if(!_sb)_sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);return _sb;}
+function fromRow(r){return{id:r.id,nom:r.nom,eglise:r.eglise,grade:r.grade,table:r.table_no,place:r.place,level:r.level,exits:r.exits,
+  status:r.status,score:r.score,maxAuto:r.max_auto,rallonge:r.rallonge,selected:r.selected,answers:r.answers,manual:r.manual||{},
+  dateISO:r.created_at,submittedISO:r.submitted_at};}
+function localAll(){try{return JSON.parse(localStorage.getItem(LS_KEY))||[]}catch(e){return[]}}
+async function fetchAll(){
+  if(cloudReady()){try{const{data,error}=await cloudClient().from('exam_sessions').select('*');if(!error&&data)return data.map(fromRow);}catch(e){console.warn(e);}}
+  return localAll();
+}
+async function saveCorrection(s){
+  if(cloudReady()){try{await cloudClient().from('exam_sessions').update({manual:s.manual,score:s.score}).eq('id',s.id);}catch(e){console.warn(e);}}
+  else{const a=localAll();const i=a.findIndex(x=>x.id===s.id);if(i>=0){a[i]=s;localStorage.setItem(LS_KEY,JSON.stringify(a));}}
+}
+function qWeight(it){return it.opts?POINTS.qcm:(it.id.indexOf('ca-')===0?POINTS.cas:POINTS.court);}
+function gradeFull(s){let raw=0,max=0,autoOk=0,autoN=0;
+  for(let lv=1;lv<=(s.level||1);lv++){((s.selected&&s.selected[lv])||[]).forEach(it=>{const w=qWeight(it);max+=w;
+    if(it.opts){autoN++;if(s.answers&&s.answers[lv]&&s.answers[lv][it.id]==it.correct){raw+=w;autoOk++;}}
+    else{const p=parseFloat((s.manual||{})[lv+'_'+it.id]);if(!isNaN(p))raw+=Math.max(0,Math.min(p,w));}});}
+  return{sur20:max?Math.round((raw/max)*20):0,raw,max,autoOk,autoN};}
+function isValide(s){return !!(s.manual&&s.manual.__valide);}
+function esc(x){return(x==null?'':String(x)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function stLabel(s){return s==='submitted'?'<span class="st st-ok">Terminé</span>':s==='disqualified'?'<span class="st st-dq">Disqualifié</span>':'<span class="st st-go">En cours</span>';}
+
+function login(){
+  const code=(document.getElementById('code').value||'').trim().toUpperCase();
+  if(!code){document.getElementById('gate-err').textContent="Entrez votre identifiant.";return;}
+  MYID=code; loadMine(true);
+}
+async function loadMine(first){
+  document.getElementById('gate-err').textContent='';
+  const all=await fetchAll();
+  const mine=all.filter(s=>!(s.manual&&s.manual.__deleted)&&s.manual&&s.manual.__corrector===MYID);
+  if(first&&!mine.length){ document.getElementById('gate-err').textContent="Aucune copie assignée à cet identifiant (ou identifiant inconnu)."; return; }
+  SESSIONS=mine;
+  try{sessionStorage.setItem(AUTH_KEY,MYID);}catch(e){}
+  const me=all.find(x=>x.id===MYID);
+  document.getElementById('me-name').textContent=me?me.nom:MYID;
+  document.getElementById('gate').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  render();
+}
+function logout(){
+  try{sessionStorage.removeItem(AUTH_KEY);}catch(e){}
+  MYID=''; SESSIONS=[]; current=null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('gate').classList.remove('hidden');
+  document.getElementById('code').value=''; document.getElementById('gate-err').textContent='';
+}
+function render(){
+  const total=SESSIONS.length, done=SESSIONS.filter(isValide).length;
+  const mc=document.getElementById('me-count'); if(mc)mc.textContent=done+' / '+total+' validées';
+  const list=SESSIONS.slice().sort((a,b)=>(isValide(a)?1:0)-(isValide(b)?1:0));
+  document.getElementById('tbody').innerHTML = list.length? list.map((s,i)=>
+    '<tr><td>'+(i+1)+'</td><td>'+esc(s.nom)+(isValide(s)?' <span class="valide">✓</span>':'')+'</td>'+
+    '<td><b style="letter-spacing:1px;color:var(--kaki-d)">'+esc(s.id)+'</b></td><td>'+esc(s.eglise)+'</td><td>'+esc(s.grade)+'</td>'+
+    '<td>'+stLabel(s.status)+'</td><td><b>'+(s.score!=null?s.score:0)+'</b> / 20</td>'+
+    '<td><button class="btn '+(isValide(s)?'btn-ghost':'btn-navy')+'" style="padding:5px 12px;font-size:12.5px" onclick="openC(\''+s.id+'\')">'+(isValide(s)?'Voir':'Corriger')+'</button></td></tr>'
+  ).join('') : '<tr><td colspan="8" class="mini" style="text-align:center;padding:20px">Aucune copie assignée.</td></tr>';
+}
+function openC(id){
+  current=SESSIONS.find(x=>x.id===id); if(!current)return;
+  const s=current; s.manual=s.manual||{};
+  let h='<div class="row" style="display:flex;gap:10px;align-items:center"><h2 style="color:var(--navy)">'+esc(s.nom)+'</h2>'+
+    '<div style="margin-left:auto"><button class="btn btn-ghost" onclick="closeC()">Fermer</button></div></div>'+
+    '<p class="mini">Identifiant : <b style="color:var(--kaki-d);letter-spacing:1px">'+esc(s.id)+'</b> · '+esc(s.eglise)+' · Grade '+esc(s.grade)+' · Épreuve '+(s.level||1)+' · Sorties '+(s.exits||0)+'/3'+(s.rallonge?' · Rallonge +'+s.rallonge+' min':'')+' · '+stLabel(s.status)+'</p><hr style="margin:12px 0;border:none;border-top:1px solid var(--line)">';
+  for(let lv=1;lv<=(s.level||1);lv++){
+    h+='<h3 style="color:var(--kaki-d);font-size:15px;margin:6px 0">'+(NIVEAU[lv]?NIVEAU[lv].titre:'Épreuve '+lv)+'</h3>';
+    ((s.selected&&s.selected[lv])||[]).forEach((it,idx)=>{
+      const a=s.answers&&s.answers[lv]?s.answers[lv][it.id]:undefined;
+      h+='<div class="q">'+(it.mod?'<div class="qmod">'+esc(it.mod)+'</div>':'')+'<div class="qn">'+(idx+1)+'. '+esc(it.q)+'</div>';
+      if(it.opts){const ok=(a==it.correct);
+        h+='<div>Réponse : <span class="'+(ok?'ok':'ko')+'">'+(a!=null?esc(it.opts[a]):'(vide)')+'</span> '+(ok?'✓ +'+POINTS.qcm:'✗ attendu : '+esc(it.opts[it.correct]))+'</div>';
+      }else{const key=lv+'_'+it.id,w=qWeight(it);
+        h+='<div class="ans">'+(a?esc(a):'<i>(pas de réponse)</i>')+'</div>'+
+          '<div style="display:flex;gap:8px;align-items:center"><label style="font-size:13px;font-weight:600">Points (0 à '+w+') :</label>'+
+          '<input type="number" min="0" max="'+w+'" step="1" style="width:80px" value="'+(s.manual[key]!=null?s.manual[key]:'')+'" oninput="setPt(\''+key+'\',this.value)"> <span class="mini">'+(w===POINTS.cas?'cas pratique':'réponse courte')+' · max '+w+' pts</span></div>';
+      }
+      h+='</div>';
+    });
+  }
+  const g=gradeFull(s);
+  h+='<div class="note"><b>Note finale : <span id="nf">'+g.sur20+'</span> / 20</b> &nbsp;·&nbsp; QCM auto : '+g.autoOk+'/'+g.autoN+
+     ' <span style="margin-left:14px"><button class="btn '+(isValide(s)?'btn-green':'btn-navy')+'" id="vbtn" onclick="toggleValide()">'+(isValide(s)?'✓ Note validée':'Valider la note')+'</button></span></div>';
+  document.getElementById('sheet').innerHTML=h;
+  document.getElementById('modal').classList.add('show');
+}
+function setPt(key,val){ current.manual[key]=val; const g=gradeFull(current); current.score=g.sur20; document.getElementById('nf').textContent=g.sur20; saveCorrection(current); render(); }
+function toggleValide(){ current.manual=current.manual||{}; current.manual.__valide=!isValide(current); saveCorrection(current);
+  const b=document.getElementById('vbtn'); if(b){b.className='btn '+(isValide(current)?'btn-green':'btn-navy'); b.textContent=isValide(current)?'✓ Note validée':'Valider la note';} render(); }
+function closeC(){ document.getElementById('modal').classList.remove('show'); current=null; }
+
+/* reste connecté après un rafraîchissement (session du navigateur) */
+try{ const c=sessionStorage.getItem(AUTH_KEY); if(c){ MYID=c; loadMine(false); } }catch(e){}
+</script>
+</body>
+</html>
