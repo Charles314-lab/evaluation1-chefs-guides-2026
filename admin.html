@@ -183,6 +183,7 @@
         <button class="side-link active" data-view="overview" onclick="showView('overview')"><span class="ic">📊</span> Vue d'ensemble</button>
         <button class="side-link" data-view="candidats" onclick="showView('candidats')"><span class="ic">👥</span> Candidats</button>
         <button class="side-link" data-view="stats" onclick="showView('stats')"><span class="ic">📈</span> Statistiques</button>
+        <button class="side-link" data-view="correction" onclick="showView('correction')"><span class="ic">✍️</span> Correction</button>
         <button class="side-link" data-view="exports" onclick="showView('exports')"><span class="ic">⤓</span> Exports</button>
       </nav>
       <div class="side-foot"><button class="btn btn-ghost" onclick="logout()">⎋ Déconnexion</button></div>
@@ -254,6 +255,21 @@
             <button class="btn btn-green" onclick="exportStatsCSV()">⤓ Statistiques (Excel · CSV)</button>
             <button class="btn btn-navy" onclick="exportStatsPDF()">⤓ Rapport statistiques (PDF)</button>
           </div>
+        </div>
+      </section>
+
+      <!-- CORRECTION -->
+      <section class="view" id="view-correction">
+        <div class="cards" id="corr-cards"></div>
+        <div class="panel">
+          <h3>Assignation des copies aux chefs guides</h3>
+          <p class="mini" style="margin-bottom:12px">Seuls les <b>chefs guides</b> (grade « Chef Guide ») corrigent. Chaque copie est attribuée au hasard à un chef guide <b>≠ son auteur</b>, de façon équilibrée. Chaque correcteur se connectera avec son <b>identifiant</b> et ne verra <b>que ses copies</b>.</p>
+          <div class="tools noprint">
+            <button class="btn btn-navy" onclick="assignCopies()">🎲 Assigner les copies (aléatoire)</button>
+            <button class="btn btn-ghost" onclick="clearAssign()">Effacer l'assignation</button>
+            <button class="btn btn-green" onclick="exportAssignCSV()">⤓ Liste des correcteurs (CSV)</button>
+          </div>
+          <div id="corr-list"></div>
         </div>
       </section>
     </div>
@@ -429,16 +445,70 @@ function render(){
   ).join('') : '<tr><td colspan="12" class="mini" style="text-align:center;padding:20px">Aucun candidat.</td></tr>';
   tickTimes();
   refreshStatsView();
+  renderCorrection();
 }
 function card(lab,val,cls){return '<div class="card '+(cls||'')+'"><div class="lab">'+lab+'</div><div class="val">'+val+'</div></div>';}
+
+/* ---------- assignation des copies aux chefs guides ---------- */
+function correctors(){ return SESSIONS.filter(s=>s.grade==='Chef Guide'); }
+function shuffleArr(a){ const b=a.slice(); for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=b[i];b[i]=b[j];b[j]=t;} return b; }
+function assignCopies(){
+  const cors=correctors();
+  if(cors.length<2){ alert("Il faut au moins 2 chefs guides (grade « Chef Guide ») pour l'assignation croisée."); return; }
+  const copies=SESSIONS.slice();
+  if(!copies.length){ alert('Aucune copie à assigner.'); return; }
+  if(!confirm('Assigner aléatoirement les '+copies.length+' copie(s) à '+cors.length+' chef(s) guide(s) ?\n(Un chef guide ne corrige jamais sa propre copie. Cela écrase une assignation précédente.)')) return;
+  const load={}; cors.forEach(c=>load[c.id]=0);
+  shuffleArr(copies).forEach(function(copy){
+    const elig=cors.filter(c=>c.id!==copy.id);
+    const mn=Math.min.apply(null,elig.map(c=>load[c.id]));
+    const pool=elig.filter(c=>load[c.id]===mn);
+    const chosen=pool[Math.floor(Math.random()*pool.length)];
+    copy.manual=copy.manual||{}; copy.manual.__corrector=chosen.id; load[chosen.id]++;
+  });
+  Promise.all(copies.map(c=>saveCorrection(c))).then(function(){ renderCorrection(); render(); alert('Assignation effectuée et enregistrée ✅'); });
+}
+function clearAssign(){
+  const copies=SESSIONS.filter(s=>s.manual&&s.manual.__corrector);
+  if(!copies.length){ alert('Aucune assignation à effacer.'); return; }
+  if(!confirm('Effacer toutes les assignations de correction ('+copies.length+' copie(s)) ?')) return;
+  copies.forEach(c=>{ delete c.manual.__corrector; });
+  Promise.all(copies.map(c=>saveCorrection(c))).then(function(){ renderCorrection(); alert('Assignations effacées.'); });
+}
+function renderCorrection(){
+  const cors=correctors();
+  const assigned=SESSIONS.filter(s=>s.manual&&s.manual.__corrector).length;
+  const cc=document.getElementById('corr-cards');
+  if(cc) cc.innerHTML=card('Chefs guides (correcteurs)',cors.length)+card('Copies à corriger',SESSIONS.length)+card('Copies assignées',assigned,(assigned===SESSIONS.length&&SESSIONS.length)?'good':(assigned?'gold':'bad'));
+  const box=document.getElementById('corr-list'); if(!box)return;
+  if(!cors.length){ box.innerHTML='<p class="mini" style="margin-top:10px">Aucun chef guide (grade « Chef Guide ») parmi les candidats — impossible d\'assigner.</p>'; return; }
+  const by={}; SESSIONS.forEach(s=>{ const c=s.manual&&s.manual.__corrector; if(c){(by[c]=by[c]||[]).push(s);} });
+  box.innerHTML=cors.map(function(c){ const list=by[c.id]||[];
+    return '<div style="border:1px solid var(--line);border-radius:11px;padding:13px 15px;margin-top:12px">'+
+      '<div style="font-weight:800;color:var(--navy-d)">'+esc(c.nom)+' <span class="mini" style="font-weight:600">· connexion : <b style="color:var(--kaki-d);letter-spacing:1px">'+esc(c.id)+'</b> · '+list.length+' copie(s)</span></div>'+
+      (list.length?'<div style="overflow:auto;margin-top:8px"><table style="font-size:13px"><thead><tr><th>#</th><th>Nom</th><th>Identifiant</th><th>Église</th><th>Grade</th></tr></thead><tbody>'+
+        list.map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+esc(s.nom)+'</td><td>'+esc(s.id)+'</td><td>'+esc(s.eglise)+'</td><td>'+esc(s.grade)+'</td></tr>').join('')+'</tbody></table></div>'
+        :'<p class="mini" style="margin-top:6px">Aucune copie assignée pour l\'instant.</p>')+'</div>';
+  }).join('');
+}
+function exportAssignCSV(){
+  const cors=correctors(); if(!cors.length){ alert('Aucun chef guide.'); return; }
+  const q=c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"';
+  const L=[[q('Correcteur (Chef Guide)'),q('Connexion (identifiant)'),q('Copie a corriger'),q('Identifiant copie'),q('Eglise'),q('Grade')].join(';')];
+  const by={}; SESSIONS.forEach(s=>{ const c=s.manual&&s.manual.__corrector; if(c){(by[c]=by[c]||[]).push(s);} });
+  cors.forEach(c=>{ (by[c.id]||[]).forEach(s=>{ L.push([q(c.nom),q(c.id),q(s.nom),q(s.id),q(s.eglise),q(s.grade)].join(';')); }); });
+  const blob=new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='assignation_correction.csv'; a.click(); URL.revokeObjectURL(a.href);
+}
 
 /* ---------- navigation entre vues ---------- */
 function showView(name){
   document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));
   document.querySelectorAll('.side-link').forEach(b=>b.classList.toggle('active',b.getAttribute('data-view')===name));
-  const T={overview:"Vue d'ensemble",candidats:"Candidats",stats:"Statistiques",exports:"Exports"};
+  const T={overview:"Vue d'ensemble",candidats:"Candidats",stats:"Statistiques",exports:"Exports",correction:"Correction"};
   const t=document.getElementById('page-title'); if(t)t.textContent=T[name]||'';
   if(name==='stats')refreshStatsView();
+  if(name==='correction')renderCorrection();
   closeNav();
 }
 function gotoCand(id){ showView('stats'); const sel=document.getElementById('cand-sel'); if(sel){sel.value=id; renderCandStats();} }
