@@ -703,6 +703,7 @@ function buildCopyHTML(s){
         body+='<div class="pts">'+(ok?POINTS.qcm:0)+' / '+POINTS.qcm+' point</div>';
       }else{const key=lv+'_'+it.id,w=qWeight(it),p=(s.manual||{})[key];
         body+='<div class="ans">'+(a?esc(a):'<i>(pas de réponse)</i>')+'</div>';
+        if(typeof CORRIGE!=='undefined'&&CORRIGE[it.id])body+='<div class="corr"><b>Corrigé :</b> '+esc(CORRIGE[it.id])+'</div>';
         body+='<div class="pts">'+((p!=null&&p!=='')?('Note : '+p+' / '+w+' points'):'En attente de correction (sur '+w+' points)')+'</div>';
       }
       body+='</div>';
@@ -718,7 +719,7 @@ function buildCopyHTML(s){
     +'#pdfsheet .note{text-align:center;background:#173f86;color:#fff;border-radius:10px;padding:11px;margin-bottom:15px}#pdfsheet .note .n{font-size:25px;font-weight:bold}#pdfsheet .note .n b{color:#ffd24a}#pdfsheet .note small{opacity:.85;font-size:11px}'
     +'#pdfsheet h2.sec{font-size:14px;color:#0e2a5e;border-left:5px solid #f2b705;padding-left:9px;margin:15px 0 8px}'
     +'#pdfsheet .q{border:1px solid #dde3ee;border-radius:9px;padding:8px 12px;margin-bottom:8px;page-break-inside:avoid}#pdfsheet .qmod{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#8a93a8;font-weight:bold}'
-    +'#pdfsheet .qn{font-weight:bold;color:#0e2a5e;margin:2px 0 5px}#pdfsheet .ans{background:#f6f8fc;border-radius:6px;padding:6px 9px;white-space:pre-wrap;margin:4px 0}#pdfsheet .ok{color:#1f8a4c;font-weight:bold}#pdfsheet .ko{color:#c0392b;font-weight:bold}#pdfsheet .pts{font-size:11px;color:#555;margin-top:3px}'
+    +'#pdfsheet .qn{font-weight:bold;color:#0e2a5e;margin:2px 0 5px}#pdfsheet .ans{background:#f6f8fc;border-radius:6px;padding:6px 9px;white-space:pre-wrap;margin:4px 0}#pdfsheet .corr{background:#eaf6ee;border-left:4px solid #1f8a4c;border-radius:6px;padding:6px 9px;margin:4px 0;font-size:12px;color:#1d3a26}#pdfsheet .ok{color:#1f8a4c;font-weight:bold}#pdfsheet .ko{color:#c0392b;font-weight:bold}#pdfsheet .pts{font-size:11px;color:#555;margin-top:3px}'
     +'#pdfsheet .foot{margin-top:18px;border-top:1px solid #ccc;padding-top:7px;text-align:center;font-size:10px;color:#888}'
     +'</style><div id="pdfsheet">'
     +'<div class="head"><img src="'+dir+'logo-cg.jpg" onerror="this.style.display=\'none\'">'

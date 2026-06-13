@@ -222,6 +222,7 @@
               <option value="submitted">Terminés</option>
               <option value="disqualified">Disqualifiés</option>
             </select>
+            <button class="btn btn-ghost" onclick="copyIds()">📋 Identifiants</button>
             <button class="btn btn-green" onclick="exportCSV()">⤓ Export Excel</button>
           </div>
           <div style="overflow:auto;max-height:64vh">
@@ -299,7 +300,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const ADMIN_USER="Master Guide";  // identifiant du responsable (modifiable ici)
-const ADMIN_PASS="CG2026";        // mot de passe (modifiable ici)
+const ADMIN_PASS="CG2026";
+const APP_URL="https://charles314-lab.github.io/evaluation1-chefs-guides-2026/";        // mot de passe (modifiable ici)
 const AUTH_KEY="cg_admin_auth";   // garde la session ouverte apres un rafraichissement
 const LS_KEY="examCG2026_sessions";
 let SESSIONS=[], current=null, rtDone=false;
@@ -627,7 +629,7 @@ function openC(id){
   current=SESSIONS.find(x=>x.id===id); if(!current)return;
   const s=current; s.manual=s.manual||{};
   let h='<div class="row noprint" style="display:flex;gap:10px;align-items:center"><h2 style="color:var(--navy)">'+esc(s.nom)+'</h2>'+
-    '<div style="margin-left:auto;display:flex;gap:8px"><button class="btn btn-green" onclick="exportPDF()">⤓ PDF</button>'+
+    '<div style="margin-left:auto;display:flex;gap:8px"><button class="btn btn-navy" onclick="copyMsg()">📋 Message candidat</button><button class="btn btn-green" onclick="exportPDF()">⤓ PDF</button>'+
     '<button class="btn btn-ghost" onclick="closeC()">Fermer</button></div></div>'+
     '<p class="mini">Identifiant : <b style="color:var(--kaki-d);letter-spacing:1px">'+esc(s.id)+'</b> · '+esc(s.eglise)+' · Grade '+esc(s.grade)+' · Table N°'+(s.table||'-')+' · '+esc(s.place||'')+
     '<br>'+(s.dateISO?new Date(s.dateISO).toLocaleString('fr-FR'):'')+' · Épreuve '+(s.level||1)+' · Sorties '+(s.exits||0)+'/3'+(s.rallonge?' · Rallonge +'+s.rallonge+' min':'')+' · '+stLabel(s.status)+'</p><hr style="margin:12px 0;border:none;border-top:1px solid var(--line)">';
@@ -640,6 +642,7 @@ function openC(id){
         h+='<div>Réponse : <span class="'+(ok?'ok':'ko')+'">'+(a!=null?esc(it.opts[a]):'(vide)')+'</span> '+(ok?'✓ +'+POINTS.qcm:'✗ attendu : '+esc(it.opts[it.correct]))+'</div>';
       }else{const key=lv+'_'+it.id,w=qWeight(it);
         h+='<div class="ans">'+(a?esc(a):'<i>(pas de réponse)</i>')+'</div>'+
+          (CORRIGE[it.id]?'<div style="background:#eaf6ee;border-left:4px solid #1f8a4c;border-radius:6px;padding:7px 10px;margin:5px 0;font-size:12.5px"><b style="color:#1f8a4c">Corrigé attendu :</b> '+esc(CORRIGE[it.id])+'</div>':'')+
           '<div class="noprint" style="display:flex;gap:8px;align-items:center"><label style="font-size:13px;font-weight:600">Points (0 à '+w+') :</label>'+
           '<input type="number" min="0" max="'+w+'" step="1" style="width:80px" value="'+(s.manual[key]!=null?s.manual[key]:'')+'" oninput="setPt(\''+key+'\',this.value)"> <span class="mini">'+(w===POINTS.cas?'cas pratique':'réponse courte')+' · max '+w+' pts</span></div>';
       }
@@ -767,6 +770,7 @@ function buildSheet(s){
         body+='<div class="pts">'+(ok?POINTS.qcm:0)+' / '+POINTS.qcm+' point</div>';
       }else{const key=lv+'_'+it.id,w=qWeight(it),p=(s.manual||{})[key];
         body+='<div class="ans">'+(a?esc(a):'<i>(pas de réponse)</i>')+'</div>';
+        if(typeof CORRIGE!=='undefined'&&CORRIGE[it.id])body+='<div class="corr"><b>Corrigé :</b> '+esc(CORRIGE[it.id])+'</div>';
         body+='<div class="pts">'+((p!=null&&p!=='')?('Note : '+p+' / '+w+' points'):'En attente de correction (sur '+w+' points)')+'</div>';
       }
       body+='</div>';
@@ -782,7 +786,7 @@ function buildSheet(s){
     +'#pdfsheet .note{text-align:center;background:#173f86;color:#fff;border-radius:10px;padding:11px;margin-bottom:15px}#pdfsheet .note .n{font-size:25px;font-weight:bold}#pdfsheet .note .n b{color:#ffd24a}#pdfsheet .note small{opacity:.85;font-size:11px}'
     +'#pdfsheet h2.sec{font-size:14px;color:#0e2a5e;border-left:5px solid #f2b705;padding-left:9px;margin:15px 0 8px}'
     +'#pdfsheet .q{border:1px solid #dde3ee;border-radius:9px;padding:8px 12px;margin-bottom:8px;page-break-inside:avoid}#pdfsheet .qmod{font-size:9.5px;text-transform:uppercase;letter-spacing:.5px;color:#8a93a8;font-weight:bold}'
-    +'#pdfsheet .qn{font-weight:bold;color:#0e2a5e;margin:2px 0 5px}#pdfsheet .ans{background:#f6f8fc;border-radius:6px;padding:6px 9px;white-space:pre-wrap;margin:4px 0}#pdfsheet .ok{color:#1f8a4c;font-weight:bold}#pdfsheet .ko{color:#c0392b;font-weight:bold}#pdfsheet .pts{font-size:11px;color:#555;margin-top:3px}'
+    +'#pdfsheet .qn{font-weight:bold;color:#0e2a5e;margin:2px 0 5px}#pdfsheet .ans{background:#f6f8fc;border-radius:6px;padding:6px 9px;white-space:pre-wrap;margin:4px 0}#pdfsheet .corr{background:#eaf6ee;border-left:4px solid #1f8a4c;border-radius:6px;padding:6px 9px;margin:4px 0;font-size:12px;color:#1d3a26}#pdfsheet .ok{color:#1f8a4c;font-weight:bold}#pdfsheet .ko{color:#c0392b;font-weight:bold}#pdfsheet .pts{font-size:11px;color:#555;margin-top:3px}'
     +'#pdfsheet .foot{margin-top:18px;border-top:1px solid #ccc;padding-top:7px;text-align:center;font-size:10px;color:#888}'
     +'</style><div id="pdfsheet">'
     +'<div class="head"><img src="'+dir+'logo-cg.jpg" onerror="this.style.display=\'none\'">'
@@ -793,6 +797,39 @@ function buildSheet(s){
     +body
     +'<div class="foot">MJA Mali · Programme Chefs Guides 2026 · « L\'amour du Christ nous presse »</div>'
     +'</div>';
+}
+
+/* ---------- communication des identifiants ---------- */
+function copyText(text,okMsg){
+  function done(){ alert(okMsg||"Copié."); }
+  function fallback(){
+    const ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.left='-9999px';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand('copy'); done(); }catch(e){ window.prompt('Copie ce texte :',text); }
+    document.body.removeChild(ta);
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(text).then(done,fallback); }
+  else { fallback(); }
+}
+function copyMsg(){
+  const s=current; if(!s){alert("Ouvre d'abord une copie.");return;}
+  const note=(s.score!=null?s.score:'?'); const NL=String.fromCharCode(10);
+  const msg="Bonjour "+(s.nom||'')+","+NL+NL
+    +"Ta copie de l'examen des Aspirants Chefs Guides 2026 est corrigée."+NL
+    +"Note finale : "+note+" / 20."+NL+NL
+    +"Pour consulter et télécharger ta copie corrigée :"+NL
+    +"1) Ouvre : "+APP_URL+NL
+    +"2) Clique sur « Consulter ma copie corrigée »"+NL
+    +"3) Entre ton identifiant : "+s.id+NL+NL
+    +"Que Dieu te bénisse.";
+  copyText(msg,"Message copié. Colle-le dans WhatsApp pour "+(s.nom||'le candidat')+".");
+}
+function copyIds(){
+  if(!SESSIONS.length){alert("Aucun candidat.");return;}
+  const NL=String.fromCharCode(10);
+  const rows=SESSIONS.slice().sort((a,b)=>(a.nom||'').localeCompare(b.nom||''))
+    .map(s=>(s.nom||'?')+'  -  '+s.id+'  -  '+(s.score!=null?s.score:'?')+'/20').join(NL);
+  copyText("Identifiants - Examen Chefs Guides 2026"+NL+"(Nom - Identifiant - Note)"+NL+NL+rows, "Liste des identifiants copiée.");
 }
 
 /* ---------- export CSV ---------- */
@@ -897,7 +934,8 @@ function buildQuestionPDF(corrige){
     byMod[mod].forEach(function(o){ const q=o.q;
       body+='<div class="qq"><div class="qn">'+esc(q.q)+'</div>';
       if(q.opts){ body+='<ol class="opts" type="A">'+q.opts.map(function(op,oi){ const good=corrige&&oi===q.correct; return '<li'+(good?' class="good"':'')+'>'+esc(op)+(good?' ✓':'')+'</li>'; }).join('')+'</ol>'; }
-      else{ const w=(o.t==='cas')?POINTS.cas:POINTS.court; body+='<div class="redac">Réponse rédigée — '+w+' pts'+(corrige?' (correction manuelle par le chef guide)':'')+(o.t==='cas'?' · cas pratique':' · réponse courte')+'</div>'; }
+      else{ const w=(o.t==='cas')?POINTS.cas:POINTS.court; body+='<div class="redac">Réponse rédigée — '+w+' pts'+(corrige?' (correction manuelle par le chef guide)':'')+(o.t==='cas'?' · cas pratique':' · réponse courte')+'</div>';
+        if(corrige && typeof CORRIGE!=='undefined' && CORRIGE[q.id]) body+='<div class="modele">'+esc(CORRIGE[q.id])+'</div>'; }
       if(corrige){ const r=refFor(q); body+='<div class="ref">'+(r?esc(r):'(référence à compléter)')+'</div>'; }
       body+='</div>';
     });
@@ -911,7 +949,7 @@ function buildQuestionPDF(corrige){
     +'#pdfsheet h2.sec{font-size:14px;color:#0e2a5e;border-left:5px solid #f2b705;padding-left:9px;margin:15px 0 8px}'
     +'#pdfsheet .qq{border:1px solid #dde3ee;border-radius:9px;padding:8px 12px;margin-bottom:7px}#pdfsheet .qn{font-weight:bold;color:#0e2a5e}'
     +'#pdfsheet ol.opts{margin:5px 0 0 22px;padding:0}#pdfsheet ol.opts li{margin:2px 0}#pdfsheet ol.opts li.good{color:#1f8a4c;font-weight:bold}'
-    +'#pdfsheet .redac{margin-top:4px;color:#8a5a12;font-style:italic;font-size:12px}'
+    +'#pdfsheet .redac{margin-top:4px;color:#8a5a12;font-style:italic;font-size:12px}#pdfsheet .modele{margin-top:5px;font-size:12px;background:#eaf6ee;border-left:4px solid #1f8a4c;border-radius:0 5px 5px 0;padding:5px 9px;color:#1d3a26}#pdfsheet .modele::before{content:"Réponse attendue : ";font-weight:bold;color:#13522f}'
     +'#pdfsheet .ref{margin-top:5px;font-size:11px;color:#444;background:#f6f8fc;border-left:3px solid #1f8a4c;padding:3px 8px;border-radius:0 5px 5px 0}#pdfsheet .ref::before{content:"Référence : ";font-weight:bold;color:#13522f}'
     +'#pdfsheet .foot{margin-top:18px;border-top:1px solid #ccc;padding-top:7px;text-align:center;font-size:10px;color:#888}'
     +'</style><div id="pdfsheet">'

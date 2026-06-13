@@ -29,6 +29,45 @@ const COMPO = {
 /* Pondération par complexité ; la note est ensuite ramenée sur 20 */
 const POINTS = { qcm:1, court:2, cas:3 };
 
+/* ============================================================
+   CORRIGÉS OFFICIELS des questions ouvertes (courtes + cas).
+   Sourcés des manuels d'administration (Aventuriers / Explorateurs,
+   Conférence Générale) et de gcyouthministries.org.
+   Affichés au responsable pour corriger, et au candidat sur sa copie.
+   ============================================================ */
+const CORRIGE = {
+  // Réponses courtes
+  "co-m1-1":"Le trépied : Physique, Mental (intellectuel) et Spirituel.",
+  "co-m1-2":"Le globe signifie que l'Explorateur vit dans le monde mais n'est pas du monde, et rappelle la mission mondiale (porter l'Évangile au monde entier en sa génération).",
+  "co-m2-1":"L'église, le foyer (la famille) et l'école, qui s'unissent pour aider l'enfant à grandir (Proverbes 22.6).",
+  "co-m3-1":"Bleu = loyauté ; Rouge = sacrifice du Christ (Jean 3.16) ; Blanc = pureté (Matthieu 5.8) ; Or = excellence (Job 23.10).",
+  "co-m3-2":"L'octogone = la perfection et la complétude du caractère du leader formé par Dieu ; le globe = la Grande Commission (Matthieu 28.19), porter le message au monde entier.",
+  "co-m4-1":"Le But, la Devise, l'Engagement, la Promesse et la Loi.",
+  "co-m4-2":"Un membre actif = présence régulière + progression dans les classes progressives + service à l'église locale.",
+  "co-m5-1":"Ami (bleu), Compagnon (rouge), Explorateur (vert), Pionnier (gris), Voyageur (bordeaux), Guide (or).",
+  "co-m6-1":"Au choix parmi : Petit Agneau (4 ans), Castor Curieux (5 ans), Abeille Active (6 ans), Rayon de Soleil (7 ans), Constructeur (8 ans), Main Utile (9 ans).",
+  "co-m7-1":"Pour exprimer et renforcer l'unité de la JA : une seule voix, un même rythme, un même cœur. C'est l'esprit d'ensemble et la solennité ; toute la troupe agit comme un seul corps.",
+  "co-m7-2":"1) Drapeau National, 2) Drapeau Chrétien, 3) Drapeau JA, 4) Drapeau Chef Guide, 5) Drapeau des Explorateurs, 6) Drapeau des Aventuriers.",
+  "co-m8-1":"Reconnaître ceux qui ont complété leur classe ; Inspirer ceux qui ne se sont pas encore engagés ; Informer l'Église et la communauté ; Communiquer les plans d'avenir.",
+  "co-m9-1":"Une table, l'emblème JA, les tableaux de la Loi et de la Promesse, le drapeau JA et le drapeau national, 1 grande bougie blanche (15 cm), 6 bougies colorées (10 cm) pour les 6 classes, 8 bougies (Loi), 7 bougies (Promesse), 1 bougie blanche par candidat.",
+  "co-m9-2":"« Voulez-vous parler ? » → « Oui chef, nous voulons prendre notre engagement. » « Dans quel but ? » → « Pour annoncer Christ au monde entier en notre génération. »",
+  "co-m10-1":"Le jeune tourne le dos au monde pour suivre les traces du Maître (Christ) et marcher selon la volonté de Dieu : il vit dans le monde mais n'est pas du monde.",
+  "co-m10-2":"Parce que l'uniforme complet compte un nombre précis d'éléments (11). S'il en manque un seul, il n'est plus conforme ni complet ; c'est pourquoi les uniformes sont notés à l'inspection. C'est une question de discipline et de rigueur.",
+  // Cas pratiques
+  "ca-m1-1":"Le Club des Explorateurs (10-15 ans) est un ministère de l'église qui développe le jeune sur les plans physique, mental et spirituel, surtout par l'exemple. Son but : « Le Message Adventiste au monde entier en ma génération ». Il forme le caractère chrétien, la foi et le leadership.",
+  "ca-m2-1":"Réponse créative : l'activité doit relier les trois piliers. Exemple : un projet de service préparé à l'école, soutenu par les parents au foyer, puis présenté et béni à l'église. Évaluer la cohérence avec église + foyer + école.",
+  "ca-m3-1":"Octogone = perfection/complétude du caractère du leader ; Globe = la Grande Commission (Matthieu 28.19), mission mondiale ; Étoiles = les classes progressives ; Trois flammes = le message des trois anges (Apocalypse 14).",
+  "ca-m4-1":"Parce que « Chef Guide » est le grade/niveau de formation le plus élevé, mais il exerce son service dans le club des Aventuriers OU des Explorateurs de son église. Il n'existe donc pas de club distinct : le Chef Guide encadre les clubs existants.",
+  "ca-m5-1":"Associer chaque classe à une image : Ami (bleu = ciel), Compagnon (rouge = sacrifice), Explorateur (vert = forêt/création), Pionnier (gris = traces), Voyageur (bordeaux = voyage/service), Guide (or = couronne/excellence). Ciel → Sacrifice → Forêt → Traces → Voyage → Couronne.",
+  "ca-m6-1":"Rayon de Soleil : 7 ans, couleur orange, verset Matthieu 5.14 (« Vous êtes la lumière du monde »). On aide l'enfant à comprendre le grand récit biblique (création, péché, salut, retour de Jésus), par des activités adaptées et les premiers campings en famille, dans la joie et la sécurité ; récompenses : écussons.",
+  "ca-m7-1":"Au moins 6 étapes dans l'ordre, ex. : appel à l'ordre ; mise en rangs par unités ; entrée du garde-couleurs ; serment au drapeau national ; serment à la Bible ; récitation du But, de la Devise, de la Promesse et de la Loi ; chant à l'unisson ; hissage des couleurs (drapeau national en dernier) ; rapport des capitaines et présences ; inspection ; culte d'ouverture.",
+  "ca-m8-1":"Du plus jeune au plus âgé : Aventuriers (6-9 ans, les parents remettent les insignes) ; Éclaireurs/Explorateurs (10-15 ans, présidé par le Chef de la Mission) ; Ambassadeurs (16-21 ans) ; Chefs Guides (22 ans et +, présidé par le Chef de l'Union ou son représentant).",
+  "ca-m9-1":"Table au-devant ; emblème JA au centre, tableau de la Loi d'un côté et de la Promesse de l'autre ; grande bougie (15 cm) au centre, les 6 bougies des classes devant ; drapeau national à droite, drapeau JA à gauche (face à l'assistance) ; Explorateurs assis en « V », candidats à l'intérieur ; Directeur à droite de la table, Président à gauche.",
+  "ca-m9-2":"Parce que c'est un engagement solennel devant Dieu et devant les hommes : le jeune décide officiellement d'entrer dans la famille JA. Cela officialise son individualité spirituelle face à Christ et sa solidarité avec la communauté, d'une importance comparable au baptême chez l'adulte.",
+  "ca-m10-1":"Principe violé : l'honnêteté dans le port des insignes (on ne porte que les insignes correspondant à des aptitudes réellement maîtrisées). Conséquences : danger réel (s'il est sollicité pour sauver quelqu'un, il met une vie en péril, y compris la sienne) et perte de crédibilité. On ne décore jamais sa tenue d'une aptitude qu'on n'a pas.",
+  "ca-m10-2":"Bas vert olive ; chemise blanche (grands événements) ; foulard et écharpe verts des Explorateurs avec la glissière ; tous les insignes du grade et des spécialisations réellement acquis ; coiffure (béret, casquette, calot ou chapeau) ; chaussures et ceinture noires ; tenue propre et complète (les 11 éléments).",
+};
+
 const POOL = {
   /* ----------------------- QCM ----------------------- */
   qcm:[
